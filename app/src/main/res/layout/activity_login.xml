@@ -17,21 +17,23 @@
         android:id="@+id/edtHost"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="URL"
-        android:lines="1" />
+        android:hint="@string/host_url"
+        android:lines="1"
+        android:text="http://192.168.199.239:8069" />
 
     <EditText
         android:id="@+id/edtUsername"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Username"
+        android:hint="@string/username"
         android:lines="1" />
 
     <EditText
         android:id="@+id/edtPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Password"
+        android:hint="@string/password"
+        android:inputType="textPassword"
         android:lines="1" />
 
     <Button
@@ -39,5 +41,5 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Login" />
+        android:text="@string/login" />
 </LinearLayout>
