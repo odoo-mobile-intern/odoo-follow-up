@@ -6,11 +6,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 
-import com.google.android.gms.drive.internal.OnDriveIdResponse;
 import com.odoo.followup.auth.Authenticator;
 
 import java.util.List;
@@ -34,12 +33,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        AccountManager manager = (AccountManager) getSystemService(ACCOUNT_SERVICE);
-        Account[] accounts = manager.getAccountsByType(Authenticator.AUTH_TYPE);
-        if (accounts.length > 0) {
-            redirectToHome();
-        }
         init();
     }
 
@@ -67,7 +62,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private Boolean isValid() {
         editHost.setError(null);
         editUsername.setError(null);
-        editPassword.setText(null);
+        editPassword.setError(null);
 
         if (editHost.getText().toString().trim().isEmpty()) {
             editHost.setError(getString(R.string.enter_url));
@@ -139,4 +134,5 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         Snackbar.make(mView, getString(R.string.invalid_username_or_password),
                 Snackbar.LENGTH_LONG).show();
     }
+
 }
