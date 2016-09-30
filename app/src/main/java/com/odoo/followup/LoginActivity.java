@@ -10,11 +10,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
+import com.google.android.gms.drive.internal.OnDriveIdResponse;
 import com.odoo.followup.auth.Authenticator;
+
+import java.util.List;
 
 import odoo.Odoo;
 import odoo.handler.OdooVersionException;
 import odoo.helper.OUser;
+import odoo.listeners.IDatabaseListListener;
 import odoo.listeners.IOdooConnectionListener;
 import odoo.listeners.IOdooLoginCallback;
 import odoo.listeners.OdooError;
@@ -24,6 +28,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private EditText editHost, editUsername, editPassword;
     private View mView;
+    private Odoo odoo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,22 +53,37 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View view) {
         mView = view;
-        validate();
-        try {
-            Odoo odoo = Odoo.createInstance(this, hostURL());
-            odoo.setOnConnect(this);
-        } catch (OdooVersionException e) {
-            e.printStackTrace();
+        if (isValid()) {
+            try {
+                odoo = Odoo.createInstance(this, hostURL());
+                odoo.setOnConnect(this);
+            } catch (OdooVersionException e) {
+                e.printStackTrace();
+            }
+
         }
     }
 
-    private void validate() {
+    private Boolean isValid() {
         editHost.setError(null);
+        editUsername.setError(null);
+        editPassword.setText(null);
+
         if (editHost.getText().toString().trim().isEmpty()) {
             editHost.setError(getString(R.string.enter_url));
-            return;
+            return true;
         }
 
+        if (editUsername.getText().toString().trim().isEmpty()) {
+            editUsername.setError(getString(R.string.username_required));
+            return true;
+        }
+
+        if (editPassword.getText().toString().trim().isEmpty()) {
+            editPassword.setError(getString(R.string.password_required));
+            return true;
+        }
+        return false;
     }
 
     private String hostURL() {
@@ -76,14 +96,27 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onConnect(Odoo odoo) {
-        odoo.authenticate(editUsername.getText().toString().trim(), editPassword.getText().toString().trim(),
-                odoo.getDatabaseList().get(0), this);
+
+        odoo.getDatabaseList(new IDatabaseListListener() {
+            @Override
+            public void onDatabasesLoad(List<String> list) {
+                if (list.size() > 1) {
+                    LoginTo(list.get(0));
+                } else {
+                    LoginTo(list.get(0));
+                }
+            }
+        });
+    }
+
+    public void LoginTo(String database) {
+        odoo.authenticate(editUsername.getText().toString().trim(), editPassword.getText().toString()
+                .trim(), database, this);
     }
 
     @Override
     public void onError(OdooError odooError) {
         Snackbar.make(mView, getString(R.string.invalid_url), Snackbar.LENGTH_LONG).show();
-        Log.e("ERROR:>>", odooError + "");
     }
 
     @Override
@@ -97,7 +130,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void redirectToHome() {
-        Log.e(">>>>>", "SUCCESSFUL LOGIN");
         startActivity(new Intent(this, HomeActivity.class));
         finish();
     }
@@ -106,6 +138,5 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onLoginFail(OdooError odooError) {
         Snackbar.make(mView, getString(R.string.invalid_username_or_password),
                 Snackbar.LENGTH_LONG).show();
-        Log.e("ERROR:>>", "Invalid Username or Password");
     }
 }

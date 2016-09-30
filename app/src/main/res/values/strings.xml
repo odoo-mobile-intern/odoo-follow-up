@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Odoo FollowUp</string>
+    <string name="app_name">Odoo Follow Up</string>
     <string name="title_activity_home">HomeActivity</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -13,4 +13,7 @@
     <string name="login">Login</string>
     <string name="host_url">Host URL</string>
     <string name="enter_url">Enter URL</string>
+    <string name="username_required">Username Required</string>
+    <string name="password_required">Password Required</string>
+
 </resources>
