@@ -15,27 +15,26 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http:www.gnu.org/licenses/>
  * <p/>
- * Created on 16/9/16 12:48 PM
+ * Created on 30/9/16 2:59 PM
  */
-package com.odoo.followup.auth;
+package com.odoo.followup.sync;
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
-public class AuthenticatorService extends Service {
-    public static final String TAG = AuthenticatorService.class.getSimpleName();
-
-    private Authenticator mAuthenticator;
-    private static final Object mAuthLock = new Object();
+public class SyncService extends Service {
+    public static final String TAG = SyncService.class.getSimpleName();
+    private SyncAdapter mSyncAdapter;
+    private static final Object mAdapterLock = new Object();
 
     @Override
     public void onCreate() {
         super.onCreate();
-        synchronized (mAuthLock) {
-            if (mAuthenticator == null) {
-                mAuthenticator = new Authenticator(getApplicationContext());
+        synchronized (mAdapterLock) {
+            if (mSyncAdapter == null) {
+                mSyncAdapter = new SyncAdapter(getApplicationContext(), true);
             }
         }
     }
@@ -43,6 +42,6 @@ public class AuthenticatorService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return mAuthenticator.getIBinder();
+        return mSyncAdapter.getSyncAdapterBinder();
     }
 }

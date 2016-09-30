@@ -11,6 +11,7 @@ import android.view.WindowManager;
 import android.widget.EditText;
 
 import com.odoo.followup.auth.Authenticator;
+import com.odoo.followup.sync.SyncAdapter;
 
 import java.util.List;
 
@@ -33,7 +34,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         init();
     }
@@ -48,37 +50,36 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View view) {
         mView = view;
-        if (isValid()) {
-            try {
-                odoo = Odoo.createInstance(this, hostURL());
-                odoo.setOnConnect(this);
-            } catch (OdooVersionException e) {
-                e.printStackTrace();
-            }
-
+        isValid();
+        try {
+            odoo = Odoo.createInstance(this, hostURL());
+            odoo.setOnConnect(this);
+        } catch (OdooVersionException e) {
+            e.printStackTrace();
         }
     }
 
-    private Boolean isValid() {
+    private void isValid() {
         editHost.setError(null);
-        editUsername.setError(null);
-        editPassword.setError(null);
-
         if (editHost.getText().toString().trim().isEmpty()) {
             editHost.setError(getString(R.string.enter_url));
-            return true;
+            editHost.requestFocus();
+            return;
         }
 
+        editUsername.setError(null);
         if (editUsername.getText().toString().trim().isEmpty()) {
             editUsername.setError(getString(R.string.username_required));
-            return true;
+            editUsername.requestFocus();
+            return;
         }
 
+        editPassword.setError(null);
         if (editPassword.getText().toString().trim().isEmpty()) {
             editPassword.setError(getString(R.string.password_required));
-            return true;
+            editPassword.requestFocus();
+            return;
         }
-        return false;
     }
 
     private String hostURL() {
@@ -120,6 +121,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         AccountManager manager = (AccountManager) getSystemService(ACCOUNT_SERVICE);
         Account account = new Account(oUser.getAndroidName(), Authenticator.AUTH_TYPE);
         if (manager.addAccountExplicitly(account, oUser.getPassword(), oUser.getAsBundle())) {
+            getContentResolver().setSyncAutomatically(account, SyncAdapter.AUTHORITY, true);
             redirectToHome();
         }
     }

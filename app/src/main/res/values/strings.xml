@@ -15,5 +15,6 @@
     <string name="enter_url">Enter URL</string>
     <string name="username_required">Username Required</string>
     <string name="password_required">Password Required</string>
+    <string name="refresh">Refresh</string>
 
 </resources>
