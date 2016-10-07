@@ -27,7 +27,7 @@ public class OModel extends SQLiteOpenHelper {
             .makeAtoIncrement().makeLocal();
     OColumn id = new OColumn("Server Id", ColumnType.INTEGER);
     OColumn write_date = new OColumn("Write date", ColumnType.DATETIME).makeLocal();
-    OColumn is_dirty = new OColumn("IS dirty", ColumnType.BOOLEAN).makeLocal().setDefaultValue("false");
+    OColumn is_dirty = new OColumn("Is dirty", ColumnType.BOOLEAN).makeLocal().setDefaultValue("false");
 
     public OModel(Context context, String model) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -98,9 +98,7 @@ public class OModel extends SQLiteOpenHelper {
     }
 
     public void deleteAll() {
-        SQLiteDatabase database = getWritableDatabase();
-        database.delete(getTableName(), null, null);
-        database.close();
+        delete(null);
     }
 
     public int delete(String where, String... args) {

@@ -28,7 +28,6 @@ import android.os.Bundle;
 import android.util.Log;
 
 public class SyncAdapter extends AbstractThreadedSyncAdapter {
-    public static final String TAG = SyncAdapter.class.getSimpleName();
     public static final String AUTHORITY = "com.odoo.followup.sync";
 
     public SyncAdapter(Context context, boolean autoInitialize) {

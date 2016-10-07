@@ -6,7 +6,7 @@ public enum ColumnType {
     INTEGER("INTEGER"),
     FLOAT("FLOAT"),
     BOOLEAN("BOOLEAN"),
-    BLOB("BLOG"),
+    BLOB("BLOB"),
     MANY2ONE("INTEGER"),
     DATETIME("VARCHAR");
 
