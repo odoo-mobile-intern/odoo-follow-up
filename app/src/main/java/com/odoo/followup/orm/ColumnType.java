@@ -6,7 +6,9 @@ public enum ColumnType {
     INTEGER("INTEGER"),
     FLOAT("FLOAT"),
     BOOLEAN("BOOLEAN"),
-    BLOB("BLOG");
+    BLOB("BLOG"),
+    MANY2ONE("INTEGER"),
+    DATETIME("VARCHAR");
 
     String type;
 

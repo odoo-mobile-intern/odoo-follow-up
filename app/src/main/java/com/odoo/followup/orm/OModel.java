@@ -2,10 +2,12 @@ package com.odoo.followup.orm;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.odoo.followup.models.ListRow;
 import com.odoo.followup.models.ModelRegistry;
 
 import java.lang.reflect.Field;
@@ -23,6 +25,9 @@ public class OModel extends SQLiteOpenHelper {
 
     OColumn _id = new OColumn("Local Id", ColumnType.INTEGER).makePrimaryKey()
             .makeAtoIncrement().makeLocal();
+    OColumn id = new OColumn("Server Id", ColumnType.INTEGER);
+    OColumn write_date = new OColumn("Write date", ColumnType.DATETIME).makeLocal();
+    OColumn is_dirty = new OColumn("IS dirty", ColumnType.BOOLEAN).makeLocal().setDefaultValue("false");
 
     public OModel(Context context, String model) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -83,5 +88,61 @@ public class OModel extends SQLiteOpenHelper {
         Long id = database.insert(getTableName(), null, values);
         database.close();
         return id.intValue();
+    }
+
+    public int update(ContentValues values, String where, String... args) {
+        SQLiteDatabase database = getReadableDatabase();
+        int id = database.update(getTableName(), values, where, args);
+        database.close();
+        return id;
+    }
+
+    public void deleteAll() {
+        SQLiteDatabase database = getWritableDatabase();
+        database.delete(getTableName(), null, null);
+        database.close();
+    }
+
+    public int delete(String where, String... args) {
+        SQLiteDatabase database = getWritableDatabase();
+        int id = database.delete(getTableName(), where, args);
+        database.close();
+        return id;
+    }
+
+    public int count() {
+        int count = 0;
+        SQLiteDatabase database = getReadableDatabase();
+
+        Cursor cursor = database.rawQuery("SELECT COUNT(*) AS TOTAL FROM " + getTableName(), null);
+
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0);
+        }
+        cursor.close();
+        database.close();
+        return count;
+    }
+
+    public List<ListRow> select() {
+        return select(null);
+    }
+
+    public List<ListRow> select(String where, String... args) {
+        List<ListRow> rows = new ArrayList<>();
+        SQLiteDatabase database = getReadableDatabase();
+        args = args.length > 0 ? args : null;
+
+        Cursor cursor = database.query(getTableName(), null, where, args, null, null, "_id DESC");
+
+        if (cursor.moveToFirst()) {
+            do {
+                rows.add(new ListRow(cursor));
+            } while (cursor.moveToNext());
+        }
+
+        database.close();
+        cursor.close();
+        return rows;
     }
 }
