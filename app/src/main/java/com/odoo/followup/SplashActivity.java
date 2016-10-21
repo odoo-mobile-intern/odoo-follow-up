@@ -16,9 +16,6 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
         AccountManager manager = (AccountManager) getSystemService(ACCOUNT_SERVICE);
         Account[] accounts = manager.getAccountsByType(Authenticator.AUTH_TYPE);
         if (accounts.length > 0) {
@@ -30,7 +27,7 @@ public class SplashActivity extends AppCompatActivity {
                     startActivity(new Intent(SplashActivity.this, LoginActivity.class));
                     finish();
                 }
-            }, 5000);
+            }, 3000);
         }
     }
 

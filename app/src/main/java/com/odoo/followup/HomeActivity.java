@@ -7,25 +7,14 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-
-import com.odoo.followup.models.ListRow;
-import com.odoo.followup.models.ResCountry;
-import com.odoo.followup.models.ResPartner;
-import com.odoo.followup.models.ResState;
-
-import java.util.List;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
     private DrawerLayout drawerLayout;
-    private ResPartner resPartner;
-    private ResState resState;
-    private ResCountry resCountry;
     private Toolbar toolbar;
 
     @Override
@@ -34,42 +23,22 @@ public class HomeActivity extends AppCompatActivity
         setContentView(R.layout.activity_home);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         init();
-        setUpDrawer();
     }
 
     private void init() {
-        resPartner = new ResPartner(this);
-        resState = new ResState(this);
-        resCountry = new ResCountry(this);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
         findViewById(R.id.fab).setOnClickListener(this);
+
+        setUpDrawer();
     }
 
     @Override
     public void onClick(View view) {
         int id = view.getId();
         if (id == R.id.fab) {
-            //displayName();
-            // countRecords();
-        }
-    }
-
-    private void countRecords() {
-        Log.e(">>>>total contact>>>>", resPartner.count() + "");
-        Log.e(">>>>total state>>>>", resState.count() + "");
-        Log.e(">>>>total country>>>>", resCountry.count() + "");
-
-    }
-
-    private void displayName() {
-        List<ListRow> rows = resPartner.select();
-        for (ListRow row : rows) {
-            Log.e(">>>>name>>>>", row.getString("name"));
-            Log.e(">>>>city>>>>", row.getString("city"));
+            //TODO:
         }
     }
 
@@ -108,7 +77,6 @@ public class HomeActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
-
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }

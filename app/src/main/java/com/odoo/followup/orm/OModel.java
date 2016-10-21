@@ -8,8 +8,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
 import android.util.Log;
 
-import com.odoo.followup.models.ListRow;
-import com.odoo.followup.models.ModelRegistry;
+import com.odoo.followup.orm.data.ListRow;
+import com.odoo.followup.orm.models.ModelRegistry;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -21,19 +21,30 @@ public class OModel extends SQLiteOpenHelper implements BaseColumns {
 
     private static final String DB_NAME = "followup.db";
     private static final int DB_VERSION = 1;
-    private String mModelName;
-    private Context mContext;
-
     OColumn _id = new OColumn("Local Id", ColumnType.INTEGER).makePrimaryKey()
             .makeAtoIncrement().makeLocal();
     OColumn id = new OColumn("Server Id", ColumnType.INTEGER);
     OColumn write_date = new OColumn("Write date", ColumnType.DATETIME).makeLocal().setDefaultValue("false");
     OColumn is_dirty = new OColumn("Is dirty", ColumnType.BOOLEAN).makeLocal().setDefaultValue("false");
+    private String mModelName;
+    private Context mContext;
 
     public OModel(Context context, String model) {
         super(context, DB_NAME, null, DB_VERSION);
         mModelName = model;
         mContext = context;
+    }
+
+    public static OModel createInstance(String modelName, Context mContext) {
+
+        HashMap<String, OModel> models = new ModelRegistry().models(mContext);
+        for (String key : models.keySet()) {
+            OModel model = models.get(key);
+            if (model.getModelName().equals(modelName)) {
+                return model;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -44,14 +55,14 @@ public class OModel extends SQLiteOpenHelper implements BaseColumns {
             String sql = statementBuilder.createStatement();
             if (sql != null) {
                 db.execSQL(sql);
+                Log.e("Model Registered", "......Model Registered.....");
             }
         }
-        Log.e(">>>>>>>>>", "model registered...");
+
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-
     }
 
     public String getTableName() {
@@ -131,9 +142,7 @@ public class OModel extends SQLiteOpenHelper implements BaseColumns {
         List<ListRow> rows = new ArrayList<>();
         SQLiteDatabase database = getReadableDatabase();
         args = args.length > 0 ? args : null;
-
         Cursor cursor = database.query(getTableName(), null, where, args, null, null, "_id DESC");
-
         if (cursor.moveToFirst()) {
             do {
                 rows.add(new ListRow(cursor));
@@ -155,21 +164,8 @@ public class OModel extends SQLiteOpenHelper implements BaseColumns {
         return serverColumns.toArray(new String[serverColumns.size()]);
     }
 
-    public static OModel createInstance(String modelName, Context mContext) {
-
-        HashMap<String, OModel> models = new ModelRegistry().models(mContext);
-        for (String key : models.keySet()) {
-            OModel model = models.get(key);
-            if (model.getModelName().equals(modelName)) {
-                return model;
-            }
-        }
-        return null;
-    }
-
     public int updateOrCreate(ContentValues values, String where, String... args) {
         List<ListRow> records = select(where, args);
-
         if (records.size() > 0) {
             ListRow row = records.get(0);
             update(values, where, args);

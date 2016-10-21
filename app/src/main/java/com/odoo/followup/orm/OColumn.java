@@ -37,5 +37,4 @@ public class OColumn {
         this.defValue = defValue;
         return this;
     }
-
 }

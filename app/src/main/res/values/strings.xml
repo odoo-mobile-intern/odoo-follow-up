@@ -16,5 +16,9 @@
     <string name="username_required">Username Required</string>
     <string name="password_required">Password Required</string>
     <string name="refresh">Refresh</string>
+    <string name="error_title_odoo_version">Unsupported Odoo Version</string>
+    <string name="msg_unsupported_odoo_version">Odoo version you are using is not supported.</string>
+    <string name="title_fail_account_create">Account Create fail</string>
+    <string name="msg_unable_to_create_account">Unable to create device account. Please try again.</string>
 
 </resources>

@@ -1,4 +1,4 @@
-package com.odoo.followup.models;
+package com.odoo.followup.orm.models;
 
 import android.content.Context;
 
