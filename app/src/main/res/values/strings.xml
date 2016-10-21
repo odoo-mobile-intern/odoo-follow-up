@@ -20,5 +20,6 @@
     <string name="msg_unsupported_odoo_version">Odoo version you are using is not supported.</string>
     <string name="title_fail_account_create">Account Create fail</string>
     <string name="msg_unable_to_create_account">Unable to create device account. Please try again.</string>
+    <string name="label_follow_up">Follow Up</string>
 
 </resources>

@@ -3,24 +3,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorAccent"
+    android:background="@color/colorPrimaryDark"
     android:gravity="center"
     android:orientation="vertical"
     android:padding="16dp"
     tools:context="com.odoo.followup.SplashActivity">
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:src="@drawable/hand_shake"
+        android:tint="#ffffff" />
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="24dp"
         android:src="@drawable/odoo_small"
         android:tint="#ffffff" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="FOLLOW UP"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/label_follow_up"
+        android:textAllCaps="true"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="#ffffff" />
 
 </LinearLayout>
