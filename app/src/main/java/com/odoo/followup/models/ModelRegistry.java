@@ -15,5 +15,4 @@ public class ModelRegistry {
         model.put("res.country", new ResCountry(context));
         return model;
     }
-
 }

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.provider.BaseColumns;
 import android.util.Log;
 
 import com.odoo.followup.models.ListRow;
@@ -16,7 +17,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-public class OModel extends SQLiteOpenHelper {
+public class OModel extends SQLiteOpenHelper implements BaseColumns {
 
     private static final String DB_NAME = "followup.db";
     private static final int DB_VERSION = 1;
@@ -26,7 +27,7 @@ public class OModel extends SQLiteOpenHelper {
     OColumn _id = new OColumn("Local Id", ColumnType.INTEGER).makePrimaryKey()
             .makeAtoIncrement().makeLocal();
     OColumn id = new OColumn("Server Id", ColumnType.INTEGER);
-    OColumn write_date = new OColumn("Write date", ColumnType.DATETIME).makeLocal();
+    OColumn write_date = new OColumn("Write date", ColumnType.DATETIME).makeLocal().setDefaultValue("false");
     OColumn is_dirty = new OColumn("Is dirty", ColumnType.BOOLEAN).makeLocal().setDefaultValue("false");
 
     public OModel(Context context, String model) {
@@ -142,5 +143,40 @@ public class OModel extends SQLiteOpenHelper {
         database.close();
         cursor.close();
         return rows;
+    }
+
+    public String[] getServerColumns() {
+        List<String> serverColumns = new ArrayList<>();
+        for (OColumn column : getColumns()) {
+            if (!column.isLocal) {
+                serverColumns.add(column.name);
+            }
+        }
+        return serverColumns.toArray(new String[serverColumns.size()]);
+    }
+
+    public static OModel createInstance(String modelName, Context mContext) {
+
+        HashMap<String, OModel> models = new ModelRegistry().models(mContext);
+        for (String key : models.keySet()) {
+            OModel model = models.get(key);
+            if (model.getModelName().equals(modelName)) {
+                return model;
+            }
+        }
+        return null;
+    }
+
+    public int updateOrCreate(ContentValues values, String where, String... args) {
+        List<ListRow> records = select(where, args);
+
+        if (records.size() > 0) {
+            ListRow row = records.get(0);
+            update(values, where, args);
+            return row.getInt(_ID);
+        } else {
+            create(values);
+        }
+        return 0;
     }
 }
