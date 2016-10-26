@@ -56,6 +56,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 progressDialog = new ProgressDialog(this);
                 progressDialog.setTitle("Please Wait");
                 progressDialog.setMessage("Logging in..");
+                progressDialog.setCancelable(false);
                 progressDialog.show();
                 odoo = Odoo.createInstance(this, hostURL());
                 odoo.setOnConnect(this);
