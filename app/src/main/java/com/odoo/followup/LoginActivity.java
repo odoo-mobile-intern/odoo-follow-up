@@ -2,6 +2,7 @@ package com.odoo.followup;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.os.Bundle;
@@ -29,6 +30,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         IOdooConnectionListener, IOdooLoginCallback {
     public static final String TAG = LoginActivity.class.getCanonicalName();
     private EditText editHost, editUsername, editPassword;
+    private ProgressDialog progressDialog;
     private View mView;
     private Odoo odoo;
 
@@ -51,6 +53,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mView = view;
         if (isValid()) {
             try {
+                progressDialog = new ProgressDialog(this);
+                progressDialog.setTitle("Please Wait");
+                progressDialog.setMessage("Logging in..");
+                progressDialog.show();
                 odoo = Odoo.createInstance(this, hostURL());
                 odoo.setOnConnect(this);
             } catch (OdooVersionException e) {
@@ -100,6 +106,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onDatabasesLoad(List<String> list) {
                 if (list.size() > 1) {
+                    progressDialog.hide();
                     // Multiple database choice
                     //FIXME: Show user dialog for choice database
                     /*
@@ -144,12 +151,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void redirectToHome() {
+        progressDialog.dismiss();
         startActivity(new Intent(this, HomeActivity.class));
         finish();
     }
 
     @Override
     public void onLoginFail(OdooError odooError) {
+        progressDialog.dismiss();
         Snackbar.make(mView, getString(R.string.invalid_username_or_password),
                 Snackbar.LENGTH_LONG).show();
     }
