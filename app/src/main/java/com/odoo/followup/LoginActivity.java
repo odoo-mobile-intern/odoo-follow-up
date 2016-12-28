@@ -3,7 +3,6 @@ package com.odoo.followup;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.ProgressDialog;
-import android.content.ContentResolver;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -21,7 +20,6 @@ import com.odoo.core.rpc.listeners.IOdooLoginCallback;
 import com.odoo.core.rpc.listeners.OdooError;
 import com.odoo.core.support.OUser;
 import com.odoo.followup.auth.Authenticator;
-import com.odoo.followup.orm.sync.SyncAdapter;
 
 import java.util.List;
 
@@ -144,7 +142,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         AccountManager manager = (AccountManager) getSystemService(ACCOUNT_SERVICE);
         Account account = new Account(oUser.getAndroidName(), Authenticator.AUTH_TYPE);
         if (manager.addAccountExplicitly(account, "N/A", oUser.getAsBundle())) {
-            ContentResolver.setSyncAutomatically(account, SyncAdapter.AUTHORITY, true);
             redirectToHome();
         } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);

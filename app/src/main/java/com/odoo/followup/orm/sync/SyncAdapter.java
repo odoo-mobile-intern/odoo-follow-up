@@ -4,10 +4,10 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.SyncResult;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.odoo.core.rpc.Odoo;
 import com.odoo.core.rpc.handler.OdooVersionException;
@@ -16,88 +16,96 @@ import com.odoo.core.rpc.helper.OdooFields;
 import com.odoo.core.rpc.helper.utils.gson.OdooRecord;
 import com.odoo.core.rpc.helper.utils.gson.OdooResult;
 import com.odoo.core.support.OUser;
-import com.odoo.followup.orm.OColumn;
 import com.odoo.followup.orm.OModel;
-import com.odoo.followup.orm.models.ResPartner;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class SyncAdapter extends AbstractThreadedSyncAdapter {
-    public static final String AUTHORITY = "com.odoo.followup.orm.sync";
+    public static final String TAG = SyncAdapter.class.getSimpleName();
     private OUser mUser;
     private Odoo odoo;
     private AccountManager accountManager;
     private Context mContext;
+    private int offset = 0;
+    private int limit = 80;
+    private OModel syncModel;
 
-    public SyncAdapter(Context context, boolean autoInitialize) {
+    public SyncAdapter(Context context, boolean autoInitialize, OModel syncModel) {
         super(context, autoInitialize);
         mContext = context;
         accountManager = (AccountManager) context.getSystemService(Context.ACCOUNT_SERVICE);
+        this.syncModel = syncModel;
     }
 
     @Override
-    public void onPerformSync(Account account, Bundle bundle, String s,
+    public void onPerformSync(Account account, Bundle bundle, String authority,
                               ContentProviderClient contentProviderClient, SyncResult syncResult) {
         mUser = getUser(account);
         try {
             odoo = Odoo.createWithUser(mContext, mUser);
-            ResPartner partner = new ResPartner(mContext);
-            List<Integer> totalRecords = createOrUpdateRecords(partner);
+            if (authority.equals("com.odoo.followup.appdata.sync")) {
+                // Sync app data with multiple models
+                // fixme
+                syncAppData();
+            } else {
+                // fixme
+                // Sync with single model sync
+                if (syncModel != null) {
+                    syncData(syncModel, syncResult);
+                } else {
+                    Log.e(TAG, "No model specified for sync service :" + authority);
+                }
+            }
         } catch (OdooVersionException e) {
             e.printStackTrace();
         }
     }
 
-    private List<Integer> createOrUpdateRecords(ResPartner partner) {
-        List<Integer> recordIds = new ArrayList<>();
-        OdooFields fields = new OdooFields();
-        fields.addAll(partner.getServerColumns());
+    private void syncAppData() {
+        //todo
+        Log.e(TAG, "App data not synced. Configuration missing");
+        /*
+            Base models:
+               - ir.model.data
+               - res.groups
+               - ir.model.model
+               - ir.model.access
+         */
+    }
+
+    private void syncData(OModel model, SyncResult syncResult) {
+        Log.e(">>", "Sync started for :" + model.getModelName());
+
+        // Step 1: read all data from server
+        //      - add domain filters
+        //      - set limit and offsets
+        //      - set sorting column
+
+        OdooFields fields = new OdooFields(model.getServerColumns());
         ODomain domain = new ODomain();
-        OdooResult result = odoo.searchRead(partner.getModelName(), fields, domain, 0, 0, null);
-        for (OdooRecord record : result.getRecords()) {
-            ContentValues values = new ContentValues();
-            for (OColumn column : partner.getColumns()) {
-                if (!column.isLocal) {
-                    switch (column.columnType) {
-                        case INTEGER:
-                            values.put(column.name, record.getInt(column.name));
-                            break;
-                        case VARCHAR:
-                            values.put(column.name, record.getString(column.name));
-                            break;
-                        case BLOB:
-                            values.put(column.name, record.getString(column.name));
-                            break;
-                        case BOOLEAN:
-                            values.put(column.name, record.getBoolean(column.name));
-                            break;
-                        case DATETIME:
-                            values.put(column.name, record.getString(column.name));
-                            break;
-                        case MANY2ONE:
-                            OdooRecord odooRecord = record.getM20(column.name);
-                            int m2oRecords = 0;
-                            if (odooRecord != null) {
-                                String modelName = column.relModel;
-                                OModel model = OModel.createInstance(modelName, mContext);
-                                if (model != null) {
-                                    ContentValues contentValues = new ContentValues();
-                                    contentValues.put("id", odooRecord.getInt("id"));
-                                    contentValues.put("name", odooRecord.getString("name"));
-                                    m2oRecords = model.updateOrCreate(contentValues, "id = ?",
-                                            odooRecord.getInt("id") + "");
-                                }
-                            }
-                            values.put(column.name, m2oRecords);
-                            break;
-                    }
-                }
-            }
-            int recordId = partner.updateOrCreate(values, "id = ? ", record.getInt("id") + "");
-            recordIds.add(recordId);
+
+        // todo: add domain filters
+        // create date
+        // write_date based on last sync datetime
+
+        OdooResult result = odoo.searchRead(model.getModelName(), fields, domain, offset, limit,
+                "create_date DESC");
+
+        if (result.containsKey("error")) {
+            Log.e(TAG, result.get("error") + "");
+            return;
         }
-        return recordIds;
+        OdooRecordUtils recordUtils = OdooRecordUtils.getInstance(model);
+        for (OdooRecord record : result.getRecords()) {
+            recordUtils.processRecord(record);
+        }
+
+        // batch insert
+        model.batchInsert(recordUtils.getRecordValuesToInsert());
+
+        // batch update
+        model.batchUpdate(recordUtils.getRecordValuesToUpdate());
+
+        // relation record sync
+
     }
 
     private OUser getUser(Account account) {

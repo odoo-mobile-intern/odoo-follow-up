@@ -28,4 +28,9 @@ public class ResPartner extends OModel {
     public ResPartner(Context context) {
         super(context, "res.partner");
     }
+
+    @Override
+    public String authority() {
+        return "com.odoo.followup.contacts.sync";
+    }
 }

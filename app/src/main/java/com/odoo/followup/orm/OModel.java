@@ -1,10 +1,13 @@
 package com.odoo.followup.orm;
 
+import android.content.ContentProviderOperation;
+import android.content.ContentProviderResult;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.net.Uri;
 import android.provider.BaseColumns;
 import android.util.Log;
 
@@ -22,6 +25,8 @@ public class OModel extends SQLiteOpenHelper implements BaseColumns {
     public static final String TAG = OModel.class.getSimpleName();
     private static final String DB_NAME = "FollowUpSQLite.db";
     private static final int DB_VERSION = 1;
+    public static final int INVALID_ROW_ID = -1;
+
     OColumn _id = new OColumn("Local Id", ColumnType.INTEGER).makePrimaryKey()
             .makeAtoIncrement().makeLocal();
     OColumn id = new OColumn("Server Id", ColumnType.INTEGER);
@@ -72,6 +77,18 @@ public class OModel extends SQLiteOpenHelper implements BaseColumns {
 
     public String getModelName() {
         return mModelName;
+    }
+
+    public String authority() {
+        return "com.odoo.followup.appdata.sync";
+    }
+
+    public Uri getUri() {
+        Uri.Builder uriBuilder = new Uri.Builder();
+        uriBuilder.authority(authority());
+        uriBuilder.appendPath(getModelName());
+        uriBuilder.scheme("content");
+        return uriBuilder.build();
     }
 
     public List<OColumn> getColumns() {
@@ -139,6 +156,19 @@ public class OModel extends SQLiteOpenHelper implements BaseColumns {
         return select(null);
     }
 
+    public int selectRowId(int server_id) {
+        SQLiteDatabase database = getReadableDatabase();
+        Cursor cursor = database.query(getTableName(), new String[]{"_id"}, "id = ? ",
+                new String[]{server_id + ""}, null, null, null);
+        int row_id = INVALID_ROW_ID;
+        if (cursor.moveToFirst()) {
+            row_id = cursor.getInt(0);
+        }
+        database.close();
+        cursor.close();
+        return row_id;
+    }
+
     public List<ListRow> select(String where, String... args) {
         List<ListRow> rows = new ArrayList<>();
         SQLiteDatabase database = getReadableDatabase();
@@ -175,5 +205,35 @@ public class OModel extends SQLiteOpenHelper implements BaseColumns {
             create(values);
         }
         return 0;
+    }
+
+    public ContentProviderResult[] batchInsert(List<ContentValues> values) {
+        ArrayList<ContentProviderOperation> operations = new ArrayList<>();
+        for (ContentValues value : values) {
+            operations.add(ContentProviderOperation.newInsert(getUri())
+                    .withValues(value).withYieldAllowed(true).build());
+        }
+        try {
+            return mContext.getContentResolver().applyBatch(authority(), operations);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void batchUpdate(List<ContentValues> values) {
+        ArrayList<ContentProviderOperation> operations = new ArrayList<>();
+        for (ContentValues value : values) {
+            operations.add(ContentProviderOperation
+                    .newUpdate(Uri.withAppendedPath(getUri(), value.get("_id") + ""))
+                    .withValues(value)
+                    .withYieldAllowed(true)
+                    .build());
+        }
+        try {
+            mContext.getContentResolver().applyBatch(authority(), operations);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
