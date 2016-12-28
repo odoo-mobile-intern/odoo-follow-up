@@ -72,9 +72,9 @@ public class OdooVersion {
         version.setServerVersion(result.getString("server_version"));
         List<Object> version_info = result.getArray("server_version_info");
         version.setVersionNumber(((Double) version_info.get(0)).intValue());
-        if (version.getVersionNumber() < 7) {
+        if (version.getVersionNumber() < 8) {
             throw new OdooVersionException("Server version is different from " +
-                    "the application supported version. (Only Odoo 7.0+ supported)");
+                    "the application supported version. (Only Odoo 8.0+ supported)");
         }
         String versionType = version_info.get(1) + "";
         int versionTypeNumber = 0;
