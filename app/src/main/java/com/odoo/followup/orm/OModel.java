@@ -19,7 +19,8 @@ import java.util.List;
 
 public class OModel extends SQLiteOpenHelper implements BaseColumns {
 
-    private static final String DB_NAME = "followup.db";
+    public static final String TAG = OModel.class.getSimpleName();
+    private static final String DB_NAME = "FollowUpSQLite.db";
     private static final int DB_VERSION = 1;
     OColumn _id = new OColumn("Local Id", ColumnType.INTEGER).makePrimaryKey()
             .makeAtoIncrement().makeLocal();
@@ -55,7 +56,7 @@ public class OModel extends SQLiteOpenHelper implements BaseColumns {
             String sql = statementBuilder.createStatement();
             if (sql != null) {
                 db.execSQL(sql);
-                Log.e("Model Registered", "......Model Registered.....");
+                Log.d(TAG, "Table created: " + model.getTableName());
             }
         }
 

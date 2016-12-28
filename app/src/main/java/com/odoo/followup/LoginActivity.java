@@ -143,7 +143,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onLoginSuccess(Odoo odoo, OUser oUser) {
         AccountManager manager = (AccountManager) getSystemService(ACCOUNT_SERVICE);
         Account account = new Account(oUser.getAndroidName(), Authenticator.AUTH_TYPE);
-        if (manager.addAccountExplicitly(account, oUser.getPassword(), oUser.getAsBundle())) {
+        if (manager.addAccountExplicitly(account, "N/A", oUser.getAsBundle())) {
             ContentResolver.setSyncAutomatically(account, SyncAdapter.AUTHORITY, true);
             redirectToHome();
         } else {

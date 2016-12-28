@@ -23,6 +23,7 @@ package com.odoo.core.rpc.wrapper;
 import android.content.Context;
 import android.net.Uri;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -65,6 +66,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -92,6 +94,11 @@ public class OdooWrapper<T> implements Response.Listener<JSONObject> {
         responseQueue = new OdooResponseQueue();
         requestQueue = Volley.newRequestQueue(context,
                 new HttpClientStack(OdooSafeClient.getSafeClient(true)));
+    }
+
+    public OdooWrapper(Context context, OUser user) {
+        this(context, user.getHost());
+        this.user = user;
     }
 
     @SuppressWarnings("unchecked")
@@ -193,12 +200,22 @@ public class OdooWrapper<T> implements Response.Listener<JSONObject> {
                     }
                 }
             };
-            JsonObjectRequest request = new JsonObjectRequest(url, postData, OdooWrapper.this, errorListener);
+            JsonObjectRequest request = new JsonObjectRequest(url, postData, OdooWrapper.this, errorListener) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    return getRequestHeaders(super.getHeaders());
+                }
+            };
             request.setRetryPolicy(new DefaultRetryPolicy(new_request_timeout, new_request_max_retry,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
             requestQueue.add(request);
         } else {
-            JsonObjectRequest request = new JsonObjectRequest(url, postData, requestFuture, requestFuture);
+            JsonObjectRequest request = new JsonObjectRequest(url, postData, requestFuture, requestFuture) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    return getRequestHeaders(super.getHeaders());
+                }
+            };
             request.setRetryPolicy(new DefaultRetryPolicy(new_request_timeout, new_request_max_retry,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
             requestQueue.add(request);
@@ -210,6 +227,15 @@ public class OdooWrapper<T> implements Response.Listener<JSONObject> {
         }
         new_request_timeout = Odoo.REQUEST_TIMEOUT_MS;
         new_request_max_retry = Odoo.DEFAULT_MAX_RETRIES;
+    }
+
+
+    private Map<String, String> getRequestHeaders(Map<String, String> headers) {
+        HashMap<String, String> newHeaders = new HashMap<>(headers);
+        if (user != null && user.getSession_id() != null) {
+            newHeaders.put("Cookie", "session_id=" + user.getSession_id());
+        }
+        return newHeaders;
     }
 
     public void requestController(String fullURL, JSONObject data, IOdooResponse callback) {
@@ -907,11 +933,11 @@ public class OdooWrapper<T> implements Response.Listener<JSONObject> {
         final OUser[] users = new OUser[1];
         users[0] = new OUser();
         users[0].setUsername(username);
-        users[0].setPassword(password);
         users[0].setDatabase(db);
         users[0].setOdooVersion(mVersion);
         users[0].setUserId(odooSession.getUid());
         users[0].setCompanyId(odooSession.getCompanyId());
+        users[0].setSession_id(odooSession.getSessionId());
         users[0].setHost(serverURL);
         OdooFields fields = new OdooFields();
         fields.addAll(new String[]{"name", "partner_id", "tz", "image_medium", "company_id"});

@@ -32,7 +32,7 @@ public class OUser {
     public static final String TAG = OUser.class.getSimpleName();
     public static final int USER_ACCOUNT_VERSION = 2;
     private Account account;
-    private String username, name, timezone, avatar, database, host, password;
+    private String username, name, timezone, avatar, database, host, session_id;
     private Integer userId, partnerId, companyId;
     private Boolean isActive = false, allowForceConnect = false;
     private OdooVersion odooVersion;
@@ -47,6 +47,14 @@ public class OUser {
 
     public void setAllowForceConnect(Boolean allowForceConnect) {
         this.allowForceConnect = allowForceConnect;
+    }
+
+    public String getSession_id() {
+        return session_id;
+    }
+
+    public void setSession_id(String session_id) {
+        this.session_id = session_id;
     }
 
     public Boolean isActive() {
@@ -133,14 +141,6 @@ public class OUser {
         return username + "[" + database + "]";
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public Account getAccount() {
         return account;
     }
@@ -166,12 +166,12 @@ public class OUser {
         data.putString("database", getDatabase());
         data.putString("host", getHost());
         data.putString("android_name", getAndroidName());
-        data.putString("password", getPassword());
         data.putInt("user_id", getUserId());
         data.putInt("partner_id", getPartnerId());
         data.putInt("company_id", getCompanyId());
         data.putBoolean("is_active", isActive());
         data.putBoolean("allow_force_connect", isAllowForceConnect());
+        data.putString("session_id", getSession_id());
         if (odooVersion != null) {
             data.putAll(odooVersion.getAsBundle());
         }
@@ -195,8 +195,6 @@ public class OUser {
             setDatabase(data.getString("database"));
         if (OBundleUtils.hasKey(data, "host"))
             setHost(data.getString("host"));
-        if (OBundleUtils.hasKey(data, "password"))
-            setPassword(data.getString("password"));
         if (OBundleUtils.hasKey(data, "user_id"))
             setUserId(data.getInt("user_id"));
         if (OBundleUtils.hasKey(data, "partner_id"))
@@ -207,6 +205,9 @@ public class OUser {
             setIsActive(data.getBoolean("is_active"));
         if (OBundleUtils.hasKey(data, "allow_force_connect"))
             setAllowForceConnect(data.getBoolean("allow_force_connect"));
+        if (OBundleUtils.hasKey(data, "session_id")) {
+            setSession_id(data.getString("session_id"));
+        }
         odooVersion = new OdooVersion();
         odooVersion.fillFromBundle(data);
     }
@@ -226,9 +227,9 @@ public class OUser {
         setAvatar(accMgr.getUserData(account, "avatar"));
         setDatabase(accMgr.getUserData(account, "database"));
         setHost(accMgr.getUserData(account, "host"));
-        setPassword(accMgr.getUserData(account, "password"));
         setCompanyId(Integer.parseInt(accMgr.getUserData(account, "company_id")));
         setAllowForceConnect(Boolean.parseBoolean(accMgr.getUserData(account, "allow_self_signed_ssl")));
+        setSession_id(accMgr.getUserData(account, "session_id"));
         try {
             OdooVersion version = new OdooVersion();
             version.setServerSerie(accMgr.getUserData(account, "server_serie"));

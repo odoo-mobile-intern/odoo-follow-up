@@ -20,15 +20,14 @@
 package com.odoo.core.rpc.helper;
 
 import com.google.gson.Gson;
+import com.odoo.core.rpc.helper.utils.OdooLog;
+import com.odoo.core.rpc.helper.utils.gson.OdooResult;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import com.odoo.core.rpc.helper.utils.OdooLog;
-import com.odoo.core.rpc.helper.utils.gson.OdooResult;
 
 public class OdooSession {
     public static final String TAG = OdooSession.class.getSimpleName();
@@ -95,7 +94,8 @@ public class OdooSession {
     public JSONObject getUserContext() {
         Gson gson = new Gson();
         try {
-            return new JSONObject(gson.toJson(userContext));
+            if (userContext != null)
+                return new JSONObject(gson.toJson(userContext));
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -16,7 +16,6 @@
  * along with this program.  If not, see <http:www.gnu.org/licenses/>
  * <p/>
  * Created on 21/4/15 4:01 PM
- *
  */
 package com.odoo.core.rpc;
 
@@ -60,6 +59,9 @@ public class Odoo extends OdooWrapper<Odoo> {
         super(context, baseURL);
     }
 
+    public Odoo(Context context, OUser user) {
+        super(context, user);
+    }
 
     public static OUser quickConnect(Context context, String url, String username,
                                      String password, String database) throws OdooVersionException {
@@ -83,6 +85,11 @@ public class Odoo extends OdooWrapper<Odoo> {
     public static Odoo createQuickInstance(Context context, String baseURL)
             throws OdooVersionException {
         return new Odoo(context, baseURL).connect(true);
+    }
+
+    public static Odoo createWithUser(Context context, OUser user)
+            throws OdooVersionException {
+        return new Odoo(context, user);
     }
 
     public Odoo setOnConnect(IOdooConnectionListener callback) {

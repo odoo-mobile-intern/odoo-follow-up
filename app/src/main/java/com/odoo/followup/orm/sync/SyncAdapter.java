@@ -41,8 +41,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                               ContentProviderClient contentProviderClient, SyncResult syncResult) {
         mUser = getUser(account);
         try {
-            odoo = Odoo.createQuickInstance(mContext, mUser.getHost());
-            odoo.authenticate(mUser.getUsername(), mUser.getPassword(), mUser.getDatabase());
+            odoo = Odoo.createWithUser(mContext, mUser);
             ResPartner partner = new ResPartner(mContext);
             List<Integer> totalRecords = createOrUpdateRecords(partner);
         } catch (OdooVersionException e) {
@@ -105,8 +104,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         OUser user = new OUser();
         user.setHost(accountManager.getUserData(account, "host"));
         user.setUsername(accountManager.getUserData(account, "username"));
-        user.setPassword(accountManager.getPassword(account));
         user.setDatabase(accountManager.getUserData(account, "database"));
+        user.setSession_id(accountManager.getUserData(account, "session_id"));
         return user;
     }
 }
