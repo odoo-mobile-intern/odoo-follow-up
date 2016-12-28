@@ -13,18 +13,17 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
+import com.odoo.core.rpc.Odoo;
+import com.odoo.core.rpc.handler.OdooVersionException;
+import com.odoo.core.rpc.listeners.IDatabaseListListener;
+import com.odoo.core.rpc.listeners.IOdooConnectionListener;
+import com.odoo.core.rpc.listeners.IOdooLoginCallback;
+import com.odoo.core.rpc.listeners.OdooError;
+import com.odoo.core.support.OUser;
 import com.odoo.followup.auth.Authenticator;
 import com.odoo.followup.orm.sync.SyncAdapter;
 
 import java.util.List;
-
-import odoo.Odoo;
-import odoo.handler.OdooVersionException;
-import odoo.helper.OUser;
-import odoo.listeners.IDatabaseListListener;
-import odoo.listeners.IOdooConnectionListener;
-import odoo.listeners.IOdooLoginCallback;
-import odoo.listeners.OdooError;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener,
         IOdooConnectionListener, IOdooLoginCallback {
@@ -46,6 +45,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         editUsername = (EditText) findViewById(R.id.edtUsername);
         editPassword = (EditText) findViewById(R.id.edtPassword);
         findViewById(R.id.btnLogin).setOnClickListener(this);
+        if (BuildConfig.DEBUG) {
+            editHost.setText("http://192.168.199.101:8069");
+            editUsername.setText("demo");
+            editPassword.setText("demo");
+        }
     }
 
     @Override

@@ -9,20 +9,19 @@ import android.content.Context;
 import android.content.SyncResult;
 import android.os.Bundle;
 
+import com.odoo.core.rpc.Odoo;
+import com.odoo.core.rpc.handler.OdooVersionException;
+import com.odoo.core.rpc.helper.ODomain;
+import com.odoo.core.rpc.helper.OdooFields;
+import com.odoo.core.rpc.helper.utils.gson.OdooRecord;
+import com.odoo.core.rpc.helper.utils.gson.OdooResult;
+import com.odoo.core.support.OUser;
 import com.odoo.followup.orm.OColumn;
 import com.odoo.followup.orm.OModel;
 import com.odoo.followup.orm.models.ResPartner;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import odoo.Odoo;
-import odoo.handler.OdooVersionException;
-import odoo.helper.ODomain;
-import odoo.helper.OUser;
-import odoo.helper.OdooFields;
-import odoo.helper.utils.gson.OdooRecord;
-import odoo.helper.utils.gson.OdooResult;
 
 public class SyncAdapter extends AbstractThreadedSyncAdapter {
     public static final String AUTHORITY = "com.odoo.followup.orm.sync";
