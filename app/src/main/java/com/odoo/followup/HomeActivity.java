@@ -7,9 +7,15 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+
+import com.odoo.followup.orm.data.ListRow;
+import com.odoo.followup.orm.models.ResPartner;
+
+import java.util.List;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
@@ -38,7 +44,14 @@ public class HomeActivity extends AppCompatActivity
     public void onClick(View view) {
         int id = view.getId();
         if (id == R.id.fab) {
-            //TODO:
+
+            ResPartner partner = new ResPartner(this);
+            List<ListRow> items = partner.select("name = ? ", "aaaaaa");
+            if (!items.isEmpty()) {
+                Log.e(">>>", partner.delete(items.get(0).getInt("_id")) + " Deleted");
+            } else {
+                Log.e(">>", "Create first on server before delete : aaaaaa");
+            }
         }
     }
 

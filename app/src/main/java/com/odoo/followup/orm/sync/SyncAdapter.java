@@ -7,6 +7,7 @@ import android.content.ContentProviderClient;
 import android.content.Context;
 import android.content.SyncResult;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.odoo.core.rpc.Odoo;
@@ -17,6 +18,7 @@ import com.odoo.core.rpc.helper.utils.gson.OdooRecord;
 import com.odoo.core.rpc.helper.utils.gson.OdooResult;
 import com.odoo.core.support.OUser;
 import com.odoo.followup.orm.OModel;
+import com.odoo.followup.orm.models.LocalRecordState;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,8 +54,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 // fixme
                 syncAppData();
             } else {
-                // fixme
-                // Sync with single model sync
                 if (syncModel != null) {
                     Log.v(TAG, "Sync started for " + syncModel.getModelName());
                     syncData(syncModel, null, syncResult);
@@ -65,6 +65,11 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                             Log.v(TAG, "Inserted " + syncResult.stats.numInserts + " record(s).");
                         if (syncResult.stats.numUpdates > 0)
                             Log.v(TAG, "Updated " + syncResult.stats.numUpdates + " record(s).");
+                        if (syncResult.stats.numDeletes > 0)
+                            Log.v(TAG, "Deleted " + syncResult.stats.numDeletes + " record(s) from local.");
+                        if (syncResult.stats.numSkippedEntries > 0)
+                            Log.v(TAG, "Deleted " + syncResult.stats.numSkippedEntries + " record(s) from server.");
+
                         Log.v(TAG, "Sync finished for " + syncModel.getModelName());
                     }
                 } else {
@@ -119,8 +124,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         OdooRecordUtils recordUtils = OdooRecordUtils.getInstance(model, syncResult);
         if (syncResult != null)
             Log.v(TAG, "Processing " + result.getTotalRecords() + " record(s) for model " + model.getModelName());
+        HashSet<Integer> recentSyncIds = new HashSet<>();
         for (OdooRecord record : result.getRecords()) {
-            recordUtils.processRecord(record);
+            if (canUpdateOrInsert(model, record)) {
+                recordUtils.processRecord(record);
+            }
+            recentSyncIds.add(record.getDouble("id").intValue());
         }
 
         // batch insert
@@ -153,6 +162,64 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 }
             }
         }
+
+        // Remove local records
+        HashSet<Integer> localServerIds = new HashSet<>(model.getServerIds());
+        localServerIds.removeAll(recentSyncIds);
+        if (!localServerIds.isEmpty()) {
+            deleteFromLocal(model, localServerIds, syncResult);
+        }
+
+        // removing record from server
+        deleteFromServer(model, syncResult);
+    }
+
+    private void deleteFromLocal(OModel model, HashSet<Integer> checkIds, SyncResult syncResult) {
+        ODomain domain = new ODomain();
+        domain.add("id", "in", new ArrayList<>(checkIds));
+        OdooResult result = odoo.searchRead(model.getModelName(), new OdooFields("id"), domain, 0, 0, null);
+        if (result == null) {
+            Log.e(TAG, "FATAL : Request aborted.");
+            return;
+        }
+        if (result.containsKey("error")) {
+            Log.e(TAG, result.get("error") + "");
+            return;
+        }
+        HashSet<Integer> serverIds = new HashSet<>();
+        for (OdooRecord record : result.getRecords()) {
+            serverIds.add(record.getDouble("id").intValue());
+        }
+        checkIds.removeAll(serverIds);
+        int deleted = model.delete("id in (" + TextUtils.join(", ", checkIds) + ")");
+        syncResult.stats.numDeletes += deleted;
+    }
+
+    private void deleteFromServer(OModel model, SyncResult syncResult) {
+        LocalRecordState recordState = new LocalRecordState(mContext);
+        List<Integer> ids = recordState.getServerIds(model.getModelName());
+        if (!ids.isEmpty()) {
+            OdooResult result = odoo.unlinkRecord(model.getModelName(), ids);
+            if (result == null) {
+                Log.e(TAG, "FATAL : Request aborted.");
+                return;
+            }
+            if (result.containsKey("error")) {
+                Log.e(TAG, result.get("error") + "");
+                return;
+            }
+            if (result.getBoolean("result")) {
+                syncResult.stats.numSkippedEntries += ids.size();
+                recordState.delete("server_id in (" + TextUtils.join(", ", ids) + ") and model = ?", model.getModelName());
+            }
+        }
+    }
+
+    private boolean canUpdateOrInsert(OModel model, OdooRecord record) {
+        LocalRecordState recordState = new LocalRecordState(mContext);
+        int server_id = record.getDouble("id").intValue();
+        return recordState.isValid(model.getModelName(), server_id,
+                record.getString("write_date"));
     }
 
     private void addRelationRecordSynced(String model, HashSet<Integer> ids) {

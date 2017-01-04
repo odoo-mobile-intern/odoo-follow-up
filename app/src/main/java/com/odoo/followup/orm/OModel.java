@@ -14,6 +14,7 @@ import android.util.Log;
 import com.odoo.core.utils.ODateUtils;
 import com.odoo.followup.orm.data.ListRow;
 import com.odoo.followup.orm.models.IrModel;
+import com.odoo.followup.orm.models.LocalRecordState;
 import com.odoo.followup.orm.models.ModelRegistry;
 
 import java.lang.reflect.Field;
@@ -134,10 +135,18 @@ public class OModel extends SQLiteOpenHelper implements BaseColumns {
     }
 
     public int delete(String where, String... args) {
+        LocalRecordState recordState = new LocalRecordState(mContext);
+        List<Integer> serverIds = selectServerIds(where, args);
+        recordState.addDeleted(getModelName(), serverIds);
+
         SQLiteDatabase database = getWritableDatabase();
         int id = database.delete(getTableName(), where, args);
         database.close();
         return id;
+    }
+
+    public int delete(int row_id) {
+        return delete("_id = ?", row_id + "");
     }
 
     public int count() {
@@ -171,6 +180,29 @@ public class OModel extends SQLiteOpenHelper implements BaseColumns {
         return row_id;
     }
 
+    public int selectServerId(int row_id) {
+        List<Integer> ids = selectServerIds("_id = ?", row_id + "");
+        if (!ids.isEmpty()) {
+            return ids.get(0);
+        }
+        return INVALID_ROW_ID;
+    }
+
+    public List<Integer> selectServerIds(String where, String... args) {
+        List<Integer> ids = new ArrayList<>();
+        SQLiteDatabase database = getReadableDatabase();
+        Cursor cursor = database.query(getTableName(), new String[]{"id"}, where, args,
+                null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
+                ids.add(cursor.getInt(0));
+            } while (cursor.moveToNext());
+        }
+        database.close();
+        cursor.close();
+        return ids;
+    }
+
     public List<ListRow> select(String where, String... args) {
         List<ListRow> rows = new ArrayList<>();
         SQLiteDatabase database = getReadableDatabase();
@@ -194,6 +226,7 @@ public class OModel extends SQLiteOpenHelper implements BaseColumns {
                 serverColumns.add(column.name);
             }
         }
+        serverColumns.add("write_date");
         return serverColumns.toArray(new String[serverColumns.size()]);
     }
 
@@ -262,4 +295,19 @@ public class OModel extends SQLiteOpenHelper implements BaseColumns {
         }
         return null;
     }
+
+    public List<Integer> getServerIds() {
+        List<Integer> ids = new ArrayList<>();
+        SQLiteDatabase database = getReadableDatabase();
+        Cursor cursor = database.query(getTableName(), new String[]{"id"}, "id != ?", new String[]{"0"}, null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
+                ids.add(cursor.getInt(0));
+            } while (cursor.moveToNext());
+        }
+        database.close();
+        cursor.close();
+        return ids;
+    }
+
 }
