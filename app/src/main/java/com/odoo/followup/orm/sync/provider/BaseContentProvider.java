@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.odoo.followup.orm.OModel;
+import com.odoo.followup.orm.models.ModelRegistry;
 
 public class BaseContentProvider extends ContentProvider {
     public static final String TAG = BaseContentProvider.class.getSimpleName();
@@ -18,8 +19,8 @@ public class BaseContentProvider extends ContentProvider {
     private final int SINGLE_ROW = 2;
     public UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
 
-    public OModel getModel(Context context) {
-        return null;
+    public OModel getModel(Context context, Uri uri) {
+        return ModelRegistry.getModel(context, uri.getPathSegments().get(0));
     }
 
     @Override
@@ -36,7 +37,7 @@ public class BaseContentProvider extends ContentProvider {
     @Nullable
     @Override
     public Cursor query(Uri uri, String[] strings, String s, String[] strings1, String s1) {
-        OModel model = getModel(getContext());
+        OModel model = getModel(getContext(), uri);
         return null;
     }
 
@@ -49,7 +50,7 @@ public class BaseContentProvider extends ContentProvider {
     @Nullable
     @Override
     public Uri insert(@NonNull Uri uri, ContentValues contentValues) {
-        OModel model = getModel(getContext());
+        OModel model = getModel(getContext(), uri);
         SQLiteDatabase db = model.getWritableDatabase();
         long new_id = db.insert(model.getTableName(), null, contentValues);
         db.close();
@@ -58,13 +59,13 @@ public class BaseContentProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String s, String[] strings) {
-        OModel model = getModel(getContext());
+        OModel model = getModel(getContext(), uri);
         return 0;
     }
 
     @Override
     public int update(Uri uri, ContentValues contentValues, String where, String[] args) {
-        OModel model = getModel(getContext());
+        OModel model = getModel(getContext(), uri);
         setMatcher(model);
         int match = matcher.match(uri);
         int count = 0;

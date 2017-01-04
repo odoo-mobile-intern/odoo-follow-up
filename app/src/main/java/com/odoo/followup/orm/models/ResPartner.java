@@ -14,7 +14,7 @@ public class ResPartner extends OModel {
     OColumn street = new OColumn("Street", ColumnType.VARCHAR);
     OColumn street2 = new OColumn("Street2", ColumnType.VARCHAR);
     OColumn city = new OColumn("City", ColumnType.VARCHAR);
-    OColumn state_id = new OColumn("State id", ColumnType.MANY2ONE, "res.state");
+    OColumn state_id = new OColumn("State id", ColumnType.MANY2ONE, "res.country.state");
     OColumn country_id = new OColumn("Country id", ColumnType.MANY2ONE, "res.country");
     OColumn zip = new OColumn("Zip", ColumnType.VARCHAR);
     OColumn website = new OColumn("Website", ColumnType.VARCHAR);

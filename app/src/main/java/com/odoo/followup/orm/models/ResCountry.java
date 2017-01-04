@@ -10,6 +10,7 @@ public class ResCountry extends OModel {
     public static final String TAG = ResCountry.class.getSimpleName();
 
     OColumn name = new OColumn("Name", ColumnType.VARCHAR);
+    OColumn code = new OColumn("Code", ColumnType.VARCHAR);
 
     public ResCountry(Context context) {
         super(context, "res.country");

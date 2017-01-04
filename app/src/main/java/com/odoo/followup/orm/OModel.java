@@ -11,7 +11,9 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 import android.util.Log;
 
+import com.odoo.core.utils.ODateUtils;
 import com.odoo.followup.orm.data.ListRow;
+import com.odoo.followup.orm.models.IrModel;
 import com.odoo.followup.orm.models.ModelRegistry;
 
 import java.lang.reflect.Field;
@@ -235,5 +237,29 @@ public class OModel extends SQLiteOpenHelper implements BaseColumns {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public OModel createModel(String modelName) {
+        return ModelRegistry.getModel(mContext, modelName);
+    }
+
+    /**
+     * Sets last sync date to current date time
+     */
+    public void updateLastSyncDate() {
+        IrModel model = new IrModel(mContext);
+        ContentValues values = new ContentValues();
+        values.put("model", getModelName());
+        values.put("last_sync_on", ODateUtils.getUTCDateTime());
+        model.updateOrCreate(values, "model = ?", getModelName());
+    }
+
+    public String getLastSyncDate() {
+        IrModel model = new IrModel(mContext);
+        List<ListRow> items = model.select("model = ?", getModelName());
+        if (!items.isEmpty()) {
+            return items.get(0).getString("last_sync_on");
+        }
+        return null;
     }
 }

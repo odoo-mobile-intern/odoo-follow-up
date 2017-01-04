@@ -18,6 +18,11 @@ import com.odoo.core.rpc.helper.utils.gson.OdooResult;
 import com.odoo.core.support.OUser;
 import com.odoo.followup.orm.OModel;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+
 public class SyncAdapter extends AbstractThreadedSyncAdapter {
     public static final String TAG = SyncAdapter.class.getSimpleName();
     private OUser mUser;
@@ -27,6 +32,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     private int offset = 0;
     private int limit = 80;
     private OModel syncModel;
+    private HashMap<String, HashSet<Integer>> relationRecordsSyncFinished = new HashMap<>();
 
     public SyncAdapter(Context context, boolean autoInitialize, OModel syncModel) {
         super(context, autoInitialize);
@@ -49,7 +55,18 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 // fixme
                 // Sync with single model sync
                 if (syncModel != null) {
-                    syncData(syncModel, syncResult);
+                    Log.v(TAG, "Sync started for " + syncModel.getModelName());
+                    syncData(syncModel, null, syncResult);
+
+                    // Sync finished
+                    syncModel.updateLastSyncDate();
+                    if (syncResult != null) {
+                        if (syncResult.stats.numInserts > 0)
+                            Log.v(TAG, "Inserted " + syncResult.stats.numInserts + " record(s).");
+                        if (syncResult.stats.numUpdates > 0)
+                            Log.v(TAG, "Updated " + syncResult.stats.numUpdates + " record(s).");
+                        Log.v(TAG, "Sync finished for " + syncModel.getModelName());
+                    }
                 } else {
                     Log.e(TAG, "No model specified for sync service :" + authority);
                 }
@@ -71,9 +88,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
          */
     }
 
-    private void syncData(OModel model, SyncResult syncResult) {
-        Log.e(">>", "Sync started for :" + model.getModelName());
-
+    private void syncData(OModel model, ODomain syncDomain, SyncResult syncResult) {
         // Step 1: read all data from server
         //      - add domain filters
         //      - set limit and offsets
@@ -82,30 +97,71 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         OdooFields fields = new OdooFields(model.getServerColumns());
         ODomain domain = new ODomain();
 
-        // todo: add domain filters
-        // create date
-        // write_date based on last sync datetime
-
+        if (syncDomain != null) {
+            domain.append(syncDomain);
+        } else {
+            // todo: add domain filters
+            // create date
+            if (model.getLastSyncDate() != null) {
+                domain.add("write_date", ">", model.getLastSyncDate());
+            }
+        }
         OdooResult result = odoo.searchRead(model.getModelName(), fields, domain, offset, limit,
                 "create_date DESC");
-
+        if (result == null) {
+            Log.e(TAG, "FATAL : Request aborted.");
+            return;
+        }
         if (result.containsKey("error")) {
             Log.e(TAG, result.get("error") + "");
             return;
         }
-        OdooRecordUtils recordUtils = OdooRecordUtils.getInstance(model);
+        OdooRecordUtils recordUtils = OdooRecordUtils.getInstance(model, syncResult);
+        if (syncResult != null)
+            Log.v(TAG, "Processing " + result.getTotalRecords() + " record(s) for model " + model.getModelName());
         for (OdooRecord record : result.getRecords()) {
             recordUtils.processRecord(record);
         }
 
         // batch insert
         model.batchInsert(recordUtils.getRecordValuesToInsert());
+        if (syncResult != null)
+            syncResult.stats.numInserts += recordUtils.getRecordValuesToInsert().size();
 
         // batch update
         model.batchUpdate(recordUtils.getRecordValuesToUpdate());
+        if (syncResult != null)
+            syncResult.stats.numUpdates += recordUtils.getRecordValuesToUpdate().size();
 
-        // relation record sync
+        // creating list for relation records to sync
+        if (recordUtils.getRelationRecordToSync().size() > 0) {
+            List<String> relModels = new ArrayList<>(recordUtils.getRelationRecordToSync().keySet());
+            for (String relModel : relModels) {
+                OModel relModelObj = model.createModel(relModel);
+                HashSet<Integer> relModelIds = recordUtils.getRelationRecordToSync().get(relModel);
+                if (relationRecordsSyncFinished.containsKey(relModel)) {
+                    HashSet<Integer> idsDone = relationRecordsSyncFinished.get(relModel);
+                    relModelIds.removeAll(idsDone);
+                }
+                if (!relModelIds.isEmpty()) {
+                    addRelationRecordSynced(relModel, relModelIds);
+                    Log.v(TAG, "Processing relation " + relModelIds.size() + " record(s) for " + relModel
+                            + (syncResult == null ? " of " + model.getModelName() : ""));
+                    ODomain relDomain = new ODomain();
+                    relDomain.add("id", "in", new ArrayList<>(relModelIds));
+                    syncData(relModelObj, relDomain, null);
+                }
+            }
+        }
+    }
 
+    private void addRelationRecordSynced(String model, HashSet<Integer> ids) {
+        HashSet<Integer> recordIds = new HashSet<>();
+        if (relationRecordsSyncFinished.containsKey(model)) {
+            recordIds.addAll(relationRecordsSyncFinished.get(model));
+        }
+        recordIds.addAll(ids);
+        relationRecordsSyncFinished.put(model, recordIds);
     }
 
     private OUser getUser(Account account) {
