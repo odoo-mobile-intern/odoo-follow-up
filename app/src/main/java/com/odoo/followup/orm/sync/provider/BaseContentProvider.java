@@ -36,9 +36,11 @@ public class BaseContentProvider extends ContentProvider {
 
     @Nullable
     @Override
-    public Cursor query(Uri uri, String[] strings, String s, String[] strings1, String s1) {
+    public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String order) {
         OModel model = getModel(getContext(), uri);
-        return null;
+        SQLiteDatabase db = model.getWritableDatabase();
+        Cursor cr = db.query(model.getTableName(), projection, selection, selectionArgs, null, null, order);
+        return cr;
     }
 
     @Nullable
@@ -81,9 +83,7 @@ public class BaseContentProvider extends ContentProvider {
                 count = db.update(model.getTableName(), contentValues, where, args);
                 break;
         }
-
         if (db != null) db.close();
-
         return count;
     }
 }

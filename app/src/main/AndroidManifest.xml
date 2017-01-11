@@ -23,13 +23,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.odoo.followup.LoginActivity" />
+        <activity android:name=".LoginActivity" />
         <activity android:name=".HomeActivity" />
 
         <service android:name=".auth.AuthenticatorService">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
+
             <meta-data
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator" />
@@ -39,9 +40,8 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-
-        <!-- Sync Providers and services-->
-        <!--App Data Provider-->
+        <!-- Sync Providers and services -->
+        <!-- App Data Provider -->
         <provider
             android:name=".orm.sync.provider.BaseContentProvider"
             android:authorities="com.odoo.followup.appdata.sync"
@@ -49,56 +49,59 @@
             android:label="@string/label_app_data"
             android:syncable="true" />
 
-        <!--App Data Sync Service-->
+        <!-- App Data Sync Service -->
         <service
             android:name=".orm.sync.SyncService"
             android:exported="true">
-
             <intent-filter>
                 <action android:name="android.content.SyncAdapter" />
             </intent-filter>
+
             <meta-data
                 android:name="android.content.SyncAdapter"
                 android:resource="@xml/sync_adapter" />
         </service>
 
-        <!--Contacts-->
+        <!-- Contacts -->
         <provider
             android:name=".orm.models.provides.ContactsProvider"
             android:authorities="com.odoo.followup.contacts.sync"
             android:exported="false"
             android:label="@string/label_contacts"
             android:syncable="true" />
+
         <service
             android:name=".orm.models.services.ContactSyncService"
             android:exported="true">
-
             <intent-filter>
                 <action android:name="android.content.SyncAdapter" />
             </intent-filter>
+
             <meta-data
                 android:name="android.content.SyncAdapter"
                 android:resource="@xml/sync_contacts_adapter" />
         </service>
 
-        <!--Lead-->
+        <!-- Lead -->
         <provider
             android:name=".orm.models.provides.LeadProvider"
             android:authorities="com.odoo.followup.leads.sync"
             android:exported="false"
             android:label="@string/label_leads"
             android:syncable="true" />
+
         <service
             android:name=".orm.models.services.LeadSyncService"
             android:exported="true">
-
             <intent-filter>
                 <action android:name="android.content.SyncAdapter" />
             </intent-filter>
+
             <meta-data
                 android:name="android.content.SyncAdapter"
                 android:resource="@xml/sync_lead_adapter" />
         </service>
+
     </application>
 
 </manifest>

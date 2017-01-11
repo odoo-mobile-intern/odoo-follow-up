@@ -192,7 +192,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         }
         checkIds.removeAll(serverIds);
         int deleted = model.delete("id in (" + TextUtils.join(", ", checkIds) + ")");
-        syncResult.stats.numDeletes += deleted;
+        if (syncResult != null) syncResult.stats.numDeletes += deleted;
     }
 
     private void deleteFromServer(OModel model, SyncResult syncResult) {
