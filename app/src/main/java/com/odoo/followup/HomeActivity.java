@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.odoo.followup.orm.OListAdapter;
 import com.odoo.followup.orm.data.ListRow;
 import com.odoo.followup.orm.models.ResPartner;
+import com.odoo.followup.orm.sync.OSyncUtils;
 import com.odoo.followup.utils.BitmapUtils;
 
 public class HomeActivity extends AppCompatActivity
@@ -92,6 +93,7 @@ public class HomeActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.menu_refresh) {
+            OSyncUtils.get(this, partner).sync(null);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -135,6 +137,9 @@ public class HomeActivity extends AppCompatActivity
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         listAdapter.changeCursor(data);
+        if (partner.count() <= 0) {
+            OSyncUtils.get(this, partner).sync(null);
+        }
     }
 
     @Override

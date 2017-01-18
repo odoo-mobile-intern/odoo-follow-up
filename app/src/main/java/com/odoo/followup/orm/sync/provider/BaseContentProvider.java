@@ -40,6 +40,9 @@ public class BaseContentProvider extends ContentProvider {
         OModel model = getModel(getContext(), uri);
         SQLiteDatabase db = model.getWritableDatabase();
         Cursor cr = db.query(model.getTableName(), projection, selection, selectionArgs, null, null, order);
+        Context ctx = getContext();
+        if (cr != null && ctx != null)
+            cr.setNotificationUri(ctx.getContentResolver(), uri);
         return cr;
     }
 
@@ -56,12 +59,14 @@ public class BaseContentProvider extends ContentProvider {
         SQLiteDatabase db = model.getWritableDatabase();
         long new_id = db.insert(model.getTableName(), null, contentValues);
         db.close();
+        notifyDataChange(uri);
         return Uri.withAppendedPath(uri, new_id + "");
     }
 
     @Override
     public int delete(Uri uri, String s, String[] strings) {
         OModel model = getModel(getContext(), uri);
+        notifyDataChange(uri);
         return 0;
     }
 
@@ -84,6 +89,14 @@ public class BaseContentProvider extends ContentProvider {
                 break;
         }
         if (db != null) db.close();
+        notifyDataChange(uri);
         return count;
+    }
+
+    private void notifyDataChange(Uri uri) {
+        // Send broadcast to registered ContentObservers, to refresh UI.
+        Context ctx = getContext();
+        assert ctx != null;
+        ctx.getContentResolver().notifyChange(uri, null);
     }
 }
