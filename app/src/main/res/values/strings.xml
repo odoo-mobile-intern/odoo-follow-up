@@ -24,5 +24,6 @@
     <string name="label_app_data">App Data</string>
     <string name="label_contacts">Contacts</string>
     <string name="label_leads">Leads</string>
+    <string name="title_new_contact">New Contact</string>
 
 </resources>

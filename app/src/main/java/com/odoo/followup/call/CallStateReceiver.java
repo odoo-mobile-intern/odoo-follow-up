@@ -6,13 +6,18 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
 
+import com.odoo.followup.orm.models.ResPartner;
+
 public class CallStateReceiver extends BroadcastReceiver
         implements CallHandler.CallStatusListener {
 
     private String outgoingNumber, incomingNumber;
+    private ResPartner partner;
+    private Context mContext;
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        mContext = context;
 
         CallHandler callHandler = new CallHandler(context, this);
         String action = intent.getAction();
@@ -33,6 +38,13 @@ public class CallStateReceiver extends BroadcastReceiver
 
     @Override
     public void callStatus(String number, CallHandler.CallStatus status) {
-        //TODO: Implement for filtering data with database
+        partner = new ResPartner(mContext);
+        String num = partner.getCallNumber(number);
+        if (num != null) {
+            createCallerWindow();
+        }
+    }
+
+    private void createCallerWindow() {
     }
 }

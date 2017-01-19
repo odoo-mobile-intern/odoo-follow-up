@@ -104,14 +104,15 @@
                 android:resource="@xml/sync_lead_adapter" />
         </service>
 
-
-        <!--Phone state receiver-->
+        <!-- Phone state receiver -->
         <receiver android:name=".call.CallStateReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE" />
                 <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
             </intent-filter>
         </receiver>
+
+        <activity android:name=".CreateNewPartner"></activity>
     </application>
 
 </manifest>
