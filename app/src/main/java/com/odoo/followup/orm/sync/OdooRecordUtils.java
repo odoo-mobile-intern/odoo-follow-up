@@ -58,7 +58,7 @@ public class OdooRecordUtils {
                             ContentValues m2oValues = new ContentValues();
                             m2oValues.put("id", m2o.getDouble("id").intValue());
                             m2oValues.put("name", m2o.getString("name"));
-                            m2o_row_id = m2oModel.create(m2oValues);
+                            m2o_row_id = m2oModel.updateOrCreate(m2oValues, "id = ? ", m2o.getInt("id") + "");
                             if (m2oModel.getServerColumns().length > 2) {
                                 addRelRecordToSync(column.relModel, m2o.getDouble("id").intValue());
                             }
