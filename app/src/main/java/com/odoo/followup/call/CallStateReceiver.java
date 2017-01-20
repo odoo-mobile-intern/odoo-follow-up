@@ -12,7 +12,6 @@ public class CallStateReceiver extends BroadcastReceiver
         implements CallHandler.CallStatusListener {
 
     private String outgoingNumber, incomingNumber;
-    private ResPartner partner;
     private Context mContext;
 
     @Override
@@ -38,7 +37,7 @@ public class CallStateReceiver extends BroadcastReceiver
 
     @Override
     public void callStatus(String number, CallHandler.CallStatus status) {
-        partner = new ResPartner(mContext);
+        ResPartner partner = new ResPartner(mContext);
         String num = partner.getCallNumber(number);
         if (num != null) {
             createCallerWindow();

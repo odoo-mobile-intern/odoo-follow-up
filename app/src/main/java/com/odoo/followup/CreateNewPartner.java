@@ -22,7 +22,7 @@ public class CreateNewPartner extends AppCompatActivity implements View.OnClickL
 
     private ImageView avatar;
     private EditText editName, editMobileNumber, editPhoneNumber, editEmail, editStreet, editStreet2,
-            editCity, editPincode, editCountry, editFax, editWebsite, editState;
+            editCity, editPincode, editFax, editWebsite;
     private CheckBox checkBoxIsCompany;
     private ResPartner partner;
     private String profileImageString = "null";
@@ -58,8 +58,6 @@ public class CreateNewPartner extends AppCompatActivity implements View.OnClickL
         editStreet = (EditText) findViewById(R.id.editStreet);
         editStreet2 = (EditText) findViewById(R.id.editStreet2);
         editCity = (EditText) findViewById(R.id.editCity);
-        editState = (EditText) findViewById(R.id.editState);
-        editCountry = (EditText) findViewById(R.id.editCountry);
         editPincode = (EditText) findViewById(R.id.editPincode);
         editWebsite = (EditText) findViewById(R.id.editWebsite);
         editFax = (EditText) findViewById(R.id.editFax);
@@ -142,20 +140,6 @@ public class CreateNewPartner extends AppCompatActivity implements View.OnClickL
                 values.put("website", "false");
             } else {
                 values.put("website", editWebsite.getText().toString());
-            }
-
-            if (editState.getText().toString().equals("")) {
-                values.put("state_id", "0");
-            } else {
-                //TODO: state name
-                values.put("state_id", "1");
-            }
-
-            if (editCountry.getText().toString().equals("")) {
-                values.put("country_id", "0");
-            } else {
-                //TODO: Country name
-                values.put("country_id", "1");
             }
 
             if (editFax.getText().toString().equals("")) {

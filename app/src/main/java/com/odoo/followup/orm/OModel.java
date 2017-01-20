@@ -329,5 +329,4 @@ public class OModel extends SQLiteOpenHelper implements BaseColumns {
         cursor.close();
         return ids;
     }
-
 }
