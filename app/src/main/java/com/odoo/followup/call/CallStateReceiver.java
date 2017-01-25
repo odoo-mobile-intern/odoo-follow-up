@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 
+import com.odoo.followup.orm.data.ListRow;
 import com.odoo.followup.orm.models.ResPartner;
 
 public class CallStateReceiver extends BroadcastReceiver
@@ -38,12 +40,10 @@ public class CallStateReceiver extends BroadcastReceiver
     @Override
     public void callStatus(String number, CallHandler.CallStatus status) {
         ResPartner partner = new ResPartner(mContext);
-        String num = partner.getCallNumber(number);
-        if (num != null) {
-            createCallerWindow();
+        ListRow callDetail = partner.getCallDetails(number);
+        if (callDetail != null) {
+            CallerWindow callerWindow = new CallerWindow(mContext, callDetail);
+            callerWindow.showCaller();
         }
-    }
-
-    private void createCallerWindow() {
     }
 }

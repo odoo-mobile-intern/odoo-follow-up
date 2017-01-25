@@ -129,18 +129,17 @@ public class OModel extends SQLiteOpenHelper implements BaseColumns {
         }
     }
 
-    public String getCallNumber(String number) {
-        String callNumber = null;
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.query(getTableName(), new String[]{"mobile"}, "mobile = ?", new String[]{number}, null, null, null);
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                callNumber = cursor.getString(0);
-            }
+    public ListRow getCallDetails(String number) {
+        ListRow row = null;
+        SQLiteDatabase database = getReadableDatabase();
+        Cursor cursor = database.query(getTableName(), null, "mobile = ?", new String[]{number},
+                null, null, null);
+        if (cursor.moveToFirst()) {
+            row = new ListRow(cursor);
         }
+        database.close();
         cursor.close();
-        db.close();
-        return callNumber;
+        return row;
     }
 
     public int update(ContentValues values, String where, String... args) {
