@@ -2,6 +2,7 @@ package com.odoo.followup;
 
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -81,16 +82,27 @@ public class HomeActivity extends OdooActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
+        Fragment fragment = new Dashboard();
         switch (item.getItemId()) {
             case R.id.menu_dashboard:
+                getSupportActionBar().setTitle("Dashboard");
+                fragment = new Dashboard();
                 break;
             case R.id.menu_customer:
+                getSupportActionBar().setTitle("Customer");
+                fragment = new Customers();
                 break;
             case R.id.menu_pipeline:
+                getSupportActionBar().setTitle("My Pipeline");
+                fragment = new Pipeline();
                 break;
             case R.id.menu_next_activity:
+                getSupportActionBar().setTitle("Next Activity");
+                fragment = new NextActivity();
                 break;
             case R.id.menu_products:
+                getSupportActionBar().setTitle("Products");
+                fragment = new Products();
                 break;
             case R.id.menu_profile:
                 // todo: start activity
@@ -99,6 +111,7 @@ public class HomeActivity extends OdooActivity
                 // todo: start activity
                 break;
         }
+        getSupportFragmentManager().beginTransaction().replace(R.id.frame_container, fragment).commit();
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
