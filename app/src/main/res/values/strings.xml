@@ -25,5 +25,8 @@
     <string name="label_contacts">Contacts</string>
     <string name="label_leads">Leads</string>
     <string name="title_new_contact">New Contact</string>
+    <string name="title_missed_call_from_customer">Missed call from customer</string>
+    <string name="label_callback">Callback</string>
+    <string name="label_schedule">Schedule</string>
 
 </resources>

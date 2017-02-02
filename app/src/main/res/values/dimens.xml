@@ -9,4 +9,7 @@
 
     <!--Alphabet image text size-->
     <dimen name="text_size_large">24sp</dimen>
+    <dimen name="dim_24">24dp</dimen>
+    <dimen name="dim_16">16dp</dimen>
+    <dimen name="dim_8">8dp</dimen>
 </resources>

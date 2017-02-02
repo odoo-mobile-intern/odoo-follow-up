@@ -22,27 +22,40 @@ package com.odoo.followup.call;
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.os.Handler;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.odoo.followup.R;
 import com.odoo.followup.orm.data.ListRow;
+import com.odoo.followup.utils.BitmapUtils;
 
 public class CallerWindow {
     public static final String TAG = CallerWindow.class.getSimpleName();
+    private static CallerWindow callerWindow;
     private ListRow callDetail;
     private Context mContext;
+    private String number;
     private WindowManager windowManager;
+    private View callerView = null;
 
-    public CallerWindow(Context context, ListRow callDetail) {
+    public static void show(Context context, String number, ListRow detail) {
+        callerWindow = new CallerWindow(context, number, detail);
+        callerWindow.showCaller();
+    }
+
+    public static void remove() {
+        callerWindow.removeWindow();
+    }
+
+    private CallerWindow(Context context, String number, ListRow callDetail) {
         this.callDetail = callDetail;
+        this.number = number;
         mContext = context;
         windowManager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
-        Log.e(">>>>>>>>", callDetail.getString("name") + " is calling");
     }
 
     private WindowManager.LayoutParams getWindowParams() {
@@ -54,34 +67,47 @@ public class CallerWindow {
                         | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
                         | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
                 PixelFormat.TRANSLUCENT);
-        params.gravity = Gravity.TOP;
+        params.gravity = Gravity.CENTER_VERTICAL;
         return params;
     }
 
-    public View getView() {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.caller_window_layout, null);
-        return view;
+    private View getView() {
+        return LayoutInflater.from(mContext).inflate(R.layout.caller_window_layout, null);
     }
 
-    public void bindView() {
-        TextView textCallername;
-        textCallername = (TextView) getView().findViewById(R.id.textCallerName);
-        if (callDetail != null)
-            textCallername.setText(callDetail.getString("name"));
+    private void bindView() {
+        TextView txvCallerName, txvCallNumber;
+        txvCallerName = (TextView) callerView.findViewById(R.id.textCallerName);
+        txvCallNumber = (TextView) callerView.findViewById(R.id.txtCallerNumber);
+        txvCallerName.setText(callDetail.getString("name"));
+        txvCallNumber.setText(number);
+        if (!callDetail.getString("image_medium").equals("false")) {
+            ImageView avatar = (ImageView) callerView.findViewById(R.id.callerImage);
+            avatar.setImageBitmap(BitmapUtils.getBitmapImage(mContext, callDetail.getString("image_medium")));
+        }
+        callerView.findViewById(R.id.closePopupWindow).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                removeWindow();
+            }
+        });
     }
 
-    public boolean isLollipop() {
-        return (android.os.Build.VERSION.SDK_INT > 19);
+    private void removeWindow() {
+        if (callerView != null) {
+            windowManager.removeViewImmediate(callerView);
+            callerView = null;
+        }
     }
 
-    public void showCaller() {
+    private void showCaller() {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                bindView();
                 WindowManager.LayoutParams params = getWindowParams();
-                params.gravity = Gravity.CENTER;
-                windowManager.addView(getView(), params);
+                callerView = getView();
+                bindView();
+                windowManager.addView(callerView, params);
             }
         }, 1000);
     }
