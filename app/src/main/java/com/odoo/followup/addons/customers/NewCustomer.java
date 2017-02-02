@@ -1,4 +1,4 @@
-package com.odoo.followup;
+package com.odoo.followup.addons.customers;
 
 import android.content.ContentValues;
 import android.content.Intent;
@@ -15,10 +15,11 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.odoo.followup.R;
 import com.odoo.followup.orm.models.ResPartner;
 import com.odoo.followup.utils.BitmapUtils;
 
-public class CreateNewPartner extends AppCompatActivity implements View.OnClickListener {
+public class NewCustomer extends AppCompatActivity implements View.OnClickListener {
 
     private ImageView avatar;
     private EditText editName, editMobileNumber, editPhoneNumber, editEmail, editStreet, editStreet2,

@@ -21,11 +21,12 @@ package com.odoo.core.support;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.odoo.core.rpc.helper.OdooVersion;
 import com.odoo.core.rpc.helper.utils.OBundleUtils;
+import com.odoo.followup.R;
 
 public class OUser {
 
@@ -37,9 +38,16 @@ public class OUser {
     private Boolean isActive = false, allowForceConnect = false;
     private OdooVersion odooVersion;
 
-//    public static OUser current(Context context) {
-//        return OdooAccountManager.getActiveUser(context);
-//    }
+    public static OUser current(Context context) {
+        AccountManager accountManager = (AccountManager) context.getSystemService(Context.ACCOUNT_SERVICE);
+        Account[] accounts = accountManager.getAccountsByType(context.getString(R.string.auth_type));
+        if (accounts.length > 0) {
+            OUser user = new OUser();
+            user.fillFromAccount(accountManager, accounts[0]);
+            return user;
+        }
+        return null;
+    }
 
     public Boolean isAllowForceConnect() {
         return allowForceConnect;
@@ -222,27 +230,11 @@ public class OUser {
         setUsername(accMgr.getUserData(account, "username"));
         setUserId(Integer.parseInt(accMgr.getUserData(account, "user_id")));
         setPartnerId(Integer.parseInt(accMgr.getUserData(account, "partner_id")));
-        setTimezone(accMgr.getUserData(account, "timezone"));
-        setIsActive(Boolean.parseBoolean(accMgr.getUserData(account, "isactive")));
         setAvatar(accMgr.getUserData(account, "avatar"));
         setDatabase(accMgr.getUserData(account, "database"));
         setHost(accMgr.getUserData(account, "host"));
         setCompanyId(Integer.parseInt(accMgr.getUserData(account, "company_id")));
-        setAllowForceConnect(Boolean.parseBoolean(accMgr.getUserData(account, "allow_self_signed_ssl")));
         setSession_id(accMgr.getUserData(account, "session_id"));
-        try {
-            OdooVersion version = new OdooVersion();
-            version.setServerSerie(accMgr.getUserData(account, "server_serie"));
-            version.setVersionType(accMgr.getUserData(account, "version_type"));
-            version.setVersionRelease(accMgr.getUserData(account, "version_release"));
-            version.setVersionNumber(Integer.parseInt(accMgr.getUserData(account, "version_number")));
-            version.setVersionTypeNumber(Integer.parseInt(accMgr.getUserData(account, "version_type_number")));
-            version.setServerVersion(accMgr.getUserData(account, "server_version"));
-            setOdooVersion(version);
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.w(TAG, e.getMessage());
-        }
     }
 
     public String getDBName() {

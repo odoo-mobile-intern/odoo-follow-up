@@ -1,4 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/menu_dashboard"
+            android:icon="@drawable/ic_action_dashboard"
+            android:title="@string/title_dashboard" />
 
+        <item android:title="@string/title_sales">
+            <menu>
+                <group android:checkableBehavior="single">
+                    <item
+                        android:id="@+id/menu_customer"
+                        android:icon="@drawable/ic_action_people"
+                        android:title="@string/title_customers" />
+                    <item
+                        android:id="@+id/menu_pipeline"
+                        android:icon="@drawable/ic_action_work"
+                        android:title="@string/title_pipeline" />
+                    <item
+                        android:id="@+id/menu_next_activity"
+                        android:icon="@drawable/ic_action_bookmark"
+                        android:title="@string/title_next_activity" />
+                    <item
+                        android:id="@+id/menu_products"
+                        android:icon="@drawable/ic_action_product"
+                        android:title="@string/title_products" />
+                </group>
+            </menu>
+        </item>
+
+        <item android:title="@string/title_preferences">
+            <menu>
+                <group android:checkableBehavior="single">
+                    <item
+                        android:id="@+id/menu_profile"
+                        android:checkable="false"
+                        android:icon="@drawable/ic_action_user"
+                        android:title="@string/title_profile" />
+                    <item
+                        android:id="@+id/menu_settings"
+                        android:checkable="false"
+                        android:icon="@drawable/ic_action_settings"
+                        android:title="@string/title_settings" />
+                </group>
+            </menu>
+        </item>
+    </group>
 </menu>

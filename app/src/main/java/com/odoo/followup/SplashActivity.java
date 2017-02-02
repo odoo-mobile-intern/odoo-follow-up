@@ -16,18 +16,18 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         AccountManager manager = (AccountManager) getSystemService(ACCOUNT_SERVICE);
-        Account[] accounts = manager.getAccountsByType(Authenticator.AUTH_TYPE);
-        if (accounts.length > 0) {
-            redirectToHome();
-        } else {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
+        final Account[] accounts = manager.getAccountsByType(Authenticator.AUTH_TYPE);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (accounts.length > 0) {
+                    redirectToHome();
+                } else {
                     startActivity(new Intent(SplashActivity.this, LoginActivity.class));
                     finish();
                 }
-            }, 900);
-        }
+            }
+        }, accounts.length > 0 ? 700 : 1000);
     }
 
     private void redirectToHome() {

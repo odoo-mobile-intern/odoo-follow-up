@@ -114,7 +114,7 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".CreateNewPartner"></activity>
+        <activity android:name=".addons.customers.NewCustomer"></activity>
     </application>
 
 </manifest>
