@@ -1,6 +1,7 @@
 package com.odoo.followup;
 
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
@@ -22,20 +23,32 @@ public class HomeActivity extends OdooActivity
     private DrawerLayout drawerLayout;
     private Toolbar toolbar;
     private OUser user;
+    private FloatingActionButton fab;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        fab = (FloatingActionButton) findViewById(R.id.fab);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Dashboard");
         user = OUser.current(this);
+
+        // loading default fragment
+        startFragment(new Dashboard(), "Dashboard");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         init();
+    }
+
+    public void setFabVisible(boolean visible) {
+        fab.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
     private void init() {
@@ -82,27 +95,21 @@ public class HomeActivity extends OdooActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        Fragment fragment = new Dashboard();
         switch (item.getItemId()) {
             case R.id.menu_dashboard:
-                getSupportActionBar().setTitle("Dashboard");
-                fragment = new Dashboard();
+                startFragment(new Dashboard(), "Dashboard");
                 break;
             case R.id.menu_customer:
-                getSupportActionBar().setTitle("Customer");
-                fragment = new Customers();
+                startFragment(new Customers(), "Customer");
                 break;
             case R.id.menu_pipeline:
-                getSupportActionBar().setTitle("My Pipeline");
-                fragment = new Pipeline();
+                startFragment(new Pipeline(), "Pipeline");
                 break;
             case R.id.menu_next_activity:
-                getSupportActionBar().setTitle("Next Activity");
-                fragment = new NextActivity();
+                startFragment(new NextActivity(), "Next");
                 break;
             case R.id.menu_products:
-                getSupportActionBar().setTitle("Products");
-                fragment = new Products();
+                startFragment(new Products(), "Products");
                 break;
             case R.id.menu_profile:
                 // todo: start activity
@@ -111,8 +118,12 @@ public class HomeActivity extends OdooActivity
                 // todo: start activity
                 break;
         }
-        getSupportFragmentManager().beginTransaction().replace(R.id.frame_container, fragment).commit();
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void startFragment(Fragment fragment, String title) {
+        setTitle(title);
+        getSupportFragmentManager().beginTransaction().replace(R.id.frame_container, fragment).commit();
     }
 }

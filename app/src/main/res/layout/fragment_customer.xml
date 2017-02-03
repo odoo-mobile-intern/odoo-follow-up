@@ -5,10 +5,9 @@
     android:layout_marginTop="?android:attr/actionBarSize"
     tools:context="com.odoo.followup.Customers">
 
-    <TextView
+    <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Customer"
-        android:textSize="24sp" />
+        android:id="@+id/contactList"/>
 
 </FrameLayout>
