@@ -1,4 +1,4 @@
-package com.odoo.followup.call;
+package com.odoo.followup.addons.customers.call;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -17,7 +17,7 @@ import android.util.Log;
 import com.odoo.followup.HomeActivity;
 import com.odoo.followup.R;
 import com.odoo.followup.orm.data.ListRow;
-import com.odoo.followup.orm.models.ResPartner;
+import com.odoo.followup.addons.customers.models.ResPartner;
 import com.odoo.followup.utils.BitmapUtils;
 
 import java.util.Locale;

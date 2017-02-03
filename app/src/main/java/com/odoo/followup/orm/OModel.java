@@ -11,6 +11,8 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 import android.util.Log;
 
+import com.odoo.core.rpc.helper.ODomain;
+import com.odoo.core.support.OUser;
 import com.odoo.core.utils.ODateUtils;
 import com.odoo.followup.orm.data.ListRow;
 import com.odoo.followup.orm.models.IrModel;
@@ -327,5 +329,17 @@ public class OModel extends SQLiteOpenHelper implements BaseColumns {
         database.close();
         cursor.close();
         return ids;
+    }
+
+    public OUser getUser() {
+        return OUser.current(mContext);
+    }
+
+    public ODomain syncDomain() {
+        return new ODomain();
+    }
+
+    public boolean isEmpty() {
+        return count() <= 0;
     }
 }

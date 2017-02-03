@@ -16,7 +16,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.odoo.followup.R;
-import com.odoo.followup.orm.models.ResPartner;
+import com.odoo.followup.addons.customers.models.ResPartner;
 import com.odoo.followup.utils.BitmapUtils;
 
 public class NewCustomer extends AppCompatActivity implements View.OnClickListener {

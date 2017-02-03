@@ -15,6 +15,11 @@ import android.view.View;
 import com.odoo.core.support.CBind;
 import com.odoo.core.support.OUser;
 import com.odoo.core.support.OdooActivity;
+import com.odoo.followup.addons.customers.Customers;
+import com.odoo.followup.addons.dashboard.Dashboard;
+import com.odoo.followup.addons.sales.NextActivity;
+import com.odoo.followup.addons.sales.Pipeline;
+import com.odoo.followup.addons.sales.Products;
 import com.odoo.followup.utils.BitmapUtils;
 
 public class HomeActivity extends OdooActivity
@@ -30,13 +35,10 @@ public class HomeActivity extends OdooActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
         fab = (FloatingActionButton) findViewById(R.id.fab);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Dashboard");
         user = OUser.current(this);
-
         // loading default fragment
         startFragment(new Dashboard(), "Dashboard");
     }

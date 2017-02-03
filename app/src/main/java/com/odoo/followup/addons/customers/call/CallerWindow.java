@@ -17,7 +17,7 @@
  * <p>
  * Created on 25/1/17 11:13 AM
  */
-package com.odoo.followup.call;
+package com.odoo.followup.addons.customers.call;
 
 import android.content.Context;
 import android.graphics.PixelFormat;

@@ -68,14 +68,14 @@
 
         <!-- Contacts -->
         <provider
-            android:name=".orm.models.provides.ContactsProvider"
+            android:name=".addons.customers.providers.ContactsProvider"
             android:authorities="com.odoo.followup.contacts.sync"
             android:exported="false"
             android:label="@string/label_contacts"
             android:syncable="true" />
 
         <service
-            android:name=".orm.models.services.ContactSyncService"
+            android:name=".addons.customers.services.ContactSyncService"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.content.SyncAdapter" />
@@ -88,14 +88,14 @@
 
         <!-- Lead -->
         <provider
-            android:name=".orm.models.provides.LeadProvider"
+            android:name=".addons.sales.providers.LeadProvider"
             android:authorities="com.odoo.followup.leads.sync"
             android:exported="false"
             android:label="@string/label_leads"
             android:syncable="true" />
 
         <service
-            android:name=".orm.models.services.LeadSyncService"
+            android:name=".addons.sales.services.LeadSyncService"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.content.SyncAdapter" />
@@ -106,15 +106,36 @@
                 android:resource="@xml/sync_lead_adapter" />
         </service>
 
+        <!--products-->
+        <!-- Lead -->
+        <provider
+            android:name=".addons.sales.providers.ProductProvider"
+            android:authorities="com.odoo.followup.products.sync"
+            android:exported="false"
+            android:label="@string/label_products"
+            android:syncable="true" />
+
+        <service
+            android:name=".addons.sales.services.ProductSyncService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/sync_products_adapter" />
+        </service>
+
         <!-- Phone state receiver -->
-        <receiver android:name=".call.CallStateReceiver">
+        <receiver android:name=".addons.customers.call.CallStateReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE" />
                 <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
             </intent-filter>
         </receiver>
 
-        <activity android:name=".addons.customers.NewCustomer"/>
+        <activity android:name=".addons.customers.NewCustomer" />
     </application>
 
 </manifest>

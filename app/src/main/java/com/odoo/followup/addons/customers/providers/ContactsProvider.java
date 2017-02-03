@@ -1,4 +1,4 @@
-package com.odoo.followup.orm.models.provides;
+package com.odoo.followup.addons.customers.providers;
 
 import com.odoo.followup.orm.sync.provider.BaseContentProvider;
 

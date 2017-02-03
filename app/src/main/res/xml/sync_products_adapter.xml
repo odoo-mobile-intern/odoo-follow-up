@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sync-adapter xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accountType="com.odoo.followup.auth"
+    android:allowParallelSyncs="false"
+    android:contentAuthority="com.odoo.followup.products.sync"
+    android:isAlwaysSyncable="true"
+    android:userVisible="true" />

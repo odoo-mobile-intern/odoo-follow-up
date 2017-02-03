@@ -105,7 +105,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         if (syncDomain != null) {
             domain.append(syncDomain);
         } else {
-            // todo: add domain filters
+            domain.append(model.syncDomain());
             // create date
             if (model.getLastSyncDate() != null) {
                 domain.add("write_date", ">", model.getLastSyncDate());

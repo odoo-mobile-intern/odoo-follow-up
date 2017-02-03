@@ -1,4 +1,4 @@
-package com.odoo.followup;
+package com.odoo.followup.addons.customers;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -11,13 +11,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.odoo.core.support.CBind;
-import com.odoo.followup.addons.customers.NewCustomer;
+import com.odoo.followup.R;
+import com.odoo.followup.addons.customers.models.ResPartner;
 import com.odoo.followup.orm.OListAdapter;
 import com.odoo.followup.orm.data.ListRow;
-import com.odoo.followup.orm.models.ResPartner;
 import com.odoo.followup.utils.BitmapUtils;
+import com.odoo.followup.utils.support.BaseFragment;
 
 public class Customers extends BaseFragment implements OListAdapter.OnViewBindListener,
         LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
@@ -76,6 +78,10 @@ public class Customers extends BaseFragment implements OListAdapter.OnViewBindLi
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         listAdapter.changeCursor(data);
+        if (contacts.isEmpty()) {
+            Toast.makeText(getContext(), R.string.getting_data, Toast.LENGTH_SHORT).show();
+            syncUtils(contacts).sync(null);
+        }
     }
 
     @Override

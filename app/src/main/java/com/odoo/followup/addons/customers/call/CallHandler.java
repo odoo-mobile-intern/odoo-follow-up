@@ -1,4 +1,4 @@
-package com.odoo.followup.call;
+package com.odoo.followup.addons.customers.call;
 
 import android.content.Context;
 import android.content.SharedPreferences;

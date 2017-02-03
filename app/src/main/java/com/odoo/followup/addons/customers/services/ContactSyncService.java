@@ -1,9 +1,9 @@
-package com.odoo.followup.orm.models.services;
+package com.odoo.followup.addons.customers.services;
 
 import android.content.Context;
 
 import com.odoo.followup.orm.OModel;
-import com.odoo.followup.orm.models.ResPartner;
+import com.odoo.followup.addons.customers.models.ResPartner;
 import com.odoo.followup.orm.sync.SyncService;
 
 public class ContactSyncService extends SyncService {

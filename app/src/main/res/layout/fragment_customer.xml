@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginTop="?android:attr/actionBarSize"
-    tools:context="com.odoo.followup.Customers">
+    tools:context="com.odoo.followup.addons.customers.Customers">
 
     <ListView
         android:layout_width="match_parent"

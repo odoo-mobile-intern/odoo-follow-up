@@ -37,5 +37,7 @@
     <string name="title_settings">Settings</string>
     <string name="title_profile">Profile</string>
     <string name="title_preferences">Preferences</string>
+    <string name="getting_data">Getting data...</string>
+    <string name="label_products">Products</string>
 
 </resources>
