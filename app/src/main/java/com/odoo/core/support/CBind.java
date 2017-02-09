@@ -25,12 +25,4 @@ public final class CBind {
             ((TextView) view).setText(value);
         }
     }
-
-    public static String getText(View view) {
-        if (view instanceof TextView) {
-            return ((TextView) view).getText().toString();
-        }
-        return null;
-    }
-
 }

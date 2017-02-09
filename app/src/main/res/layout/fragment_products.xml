@@ -5,9 +5,13 @@
     android:layout_marginTop="?android:attr/actionBarSize"
     android:orientation="vertical">
 
-    <ListView
+    <GridView
         android:id="@+id/productsView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:horizontalSpacing="@dimen/dim_4"
+        android:background="#11414141"
+        android:numColumns="2"
+        android:verticalSpacing="@dimen/dim_4" />
 
 </LinearLayout>
