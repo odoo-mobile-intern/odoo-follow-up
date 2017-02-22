@@ -136,7 +136,8 @@
         </receiver>
 
         <activity android:name=".addons.customers.NewCustomer" />
-        <activity android:name=".addons.sales.ProductDetail"/>
+        <activity android:name=".addons.sales.ProductDetail" />
+        <activity android:name=".UserProfile"/>
     </application>
 
 </manifest>

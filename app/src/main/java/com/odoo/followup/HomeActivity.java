@@ -1,5 +1,6 @@
 package com.odoo.followup;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -114,6 +115,7 @@ public class HomeActivity extends OdooActivity
                 startFragment(new Products(), "Products");
                 break;
             case R.id.menu_profile:
+                startActivity(new Intent(this,UserProfile.class));
                 // todo: start activity
                 break;
             case R.id.menu_settings:
