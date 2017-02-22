@@ -6,7 +6,7 @@ import com.odoo.followup.orm.ColumnType;
 import com.odoo.followup.orm.OColumn;
 import com.odoo.followup.orm.OModel;
 
-public class ProductProduct extends OModel {
+public class ProductTemplate extends OModel {
 
     OColumn name = new OColumn("Name", ColumnType.VARCHAR);
     OColumn image_medium = new OColumn("Product Image", ColumnType.BLOB);
@@ -15,8 +15,8 @@ public class ProductProduct extends OModel {
     OColumn default_code = new OColumn("Internal Reference", ColumnType.VARCHAR);
     OColumn description_sale = new OColumn("Description", ColumnType.VARCHAR);
 
-    public ProductProduct(Context context) {
-        super(context, "product.product");
+    public ProductTemplate(Context context) {
+        super(context, "product.template");
     }
 
     @Override

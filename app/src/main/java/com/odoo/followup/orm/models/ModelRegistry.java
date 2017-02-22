@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.odoo.followup.addons.customers.models.ResPartner;
 import com.odoo.followup.addons.sales.models.CRMLead;
-import com.odoo.followup.addons.sales.models.ProductProduct;
+import com.odoo.followup.addons.sales.models.ProductTemplate;
 import com.odoo.followup.orm.OModel;
 
 import java.util.HashMap;
@@ -19,7 +19,7 @@ public class ModelRegistry {
         model.put("res.country.state", new ResState(context));
         model.put("res.country", new ResCountry(context));
         model.put("crm.lead", new CRMLead(context));
-        model.put("product.product", new ProductProduct(context));
+        model.put("product.template", new ProductTemplate(context));
         return model;
     }
 

@@ -9,8 +9,9 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.odoo.core.support.CBind;
+import com.odoo.core.support.OUser;
 import com.odoo.followup.R;
-import com.odoo.followup.addons.sales.models.ProductProduct;
+import com.odoo.followup.addons.sales.models.ProductTemplate;
 import com.odoo.followup.orm.data.ListRow;
 import com.odoo.followup.utils.BitmapUtils;
 
@@ -18,30 +19,30 @@ import java.util.List;
 
 public class ProductDetail extends AppCompatActivity {
 
-    private ProductProduct product;
-    private String productName;
+    private ProductTemplate product;
+    private String productWebsiteURL;
+    private int product_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_detail);
+        product_id = getIntent().getIntExtra("id", 0);
+        productWebsiteURL = OUser.current(this).getHost() + "/shop/product/" + product_id;
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.product_detail_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        product = new ProductProduct(this);
+        product = new ProductTemplate(this);
         setProductDetail();
     }
 
     private void setProductDetail() {
-
-        int id = getIntent().getIntExtra("id", 0);
-        List<ListRow> rows = product.select("_id = ? ", String.valueOf(id));
+        List<ListRow> rows = product.select("_id = ? ", String.valueOf(product_id));
         for (ListRow row : rows) {
             setTitle(row.getString("name"));
-            productName = row.getString("name");
 
             if (!row.getString("image_medium").equals("false")) {
                 CBind.setImage(findViewById(R.id.product_image),
@@ -56,9 +57,7 @@ public class ProductDetail extends AppCompatActivity {
 
             findViewById(R.id.desc_card_view).setVisibility(
                     row.getString("description_sale").equals("false") ? View.GONE : View.VISIBLE);
-
         }
-
     }
 
     @Override
@@ -78,7 +77,7 @@ public class ProductDetail extends AppCompatActivity {
                 Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
                 shareIntent.setAction(Intent.ACTION_SEND);
                 shareIntent.setType("text/plain");
-                shareIntent.putExtra(Intent.EXTRA_TEXT, productName);
+                shareIntent.putExtra(Intent.EXTRA_TEXT, productWebsiteURL);
                 startActivity(Intent.createChooser(shareIntent, "Share using..."));
                 break;
         }

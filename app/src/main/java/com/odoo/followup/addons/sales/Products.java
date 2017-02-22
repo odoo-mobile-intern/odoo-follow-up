@@ -16,7 +16,7 @@ import android.widget.Toast;
 
 import com.odoo.core.support.CBind;
 import com.odoo.followup.R;
-import com.odoo.followup.addons.sales.models.ProductProduct;
+import com.odoo.followup.addons.sales.models.ProductTemplate;
 import com.odoo.followup.orm.OListAdapter;
 import com.odoo.followup.orm.data.ListRow;
 import com.odoo.followup.utils.BitmapUtils;
@@ -25,7 +25,7 @@ import com.odoo.followup.utils.support.BaseFragment;
 public class Products extends BaseFragment implements OListAdapter.OnViewBindListener,
         LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener {
 
-    private ProductProduct products;
+    private ProductTemplate products;
     private OListAdapter adapter;
 
     @Override
@@ -38,7 +38,7 @@ public class Products extends BaseFragment implements OListAdapter.OnViewBindLis
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        products = new ProductProduct(getContext());
+        products = new ProductTemplate(getContext());
         init();
     }
 
@@ -88,7 +88,7 @@ public class Products extends BaseFragment implements OListAdapter.OnViewBindLis
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         Cursor cr = (Cursor) adapter.getItem(position);
         Intent intent = new Intent(getContext(), ProductDetail.class);
-        intent.putExtra("id", cr.getInt(cr.getColumnIndex("_id")));
+        intent.putExtra("id", cr.getInt(cr.getColumnIndex("id")));
         startActivity(intent);
     }
 }
