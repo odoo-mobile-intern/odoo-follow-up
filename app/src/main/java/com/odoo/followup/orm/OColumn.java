@@ -6,6 +6,7 @@ public class OColumn {
     public Boolean isPrimaryKey = false, isAutoIncrement = false, isLocal = false;
     public ColumnType columnType;
     public Object defValue;
+    public String storeName = null;
 
 
     public OColumn(String label, ColumnType columnType) {
@@ -36,5 +37,9 @@ public class OColumn {
     public OColumn setDefaultValue(Object defValue) {
         this.defValue = defValue;
         return this;
+    }
+
+    public String getStoreColumn() {
+        return storeName == null ? name : storeName;
     }
 }

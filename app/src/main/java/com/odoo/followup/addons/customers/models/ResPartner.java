@@ -5,6 +5,7 @@ import android.content.Context;
 import com.odoo.followup.orm.ColumnType;
 import com.odoo.followup.orm.OColumn;
 import com.odoo.followup.orm.OModel;
+import com.odoo.followup.orm.annotation.Odoo;
 
 public class ResPartner extends OModel {
     public static final String TAG = ResPartner.class.getSimpleName();
@@ -22,6 +23,7 @@ public class ResPartner extends OModel {
     OColumn mobile = new OColumn("Mobile", ColumnType.VARCHAR);
     OColumn fax = new OColumn("Fax", ColumnType.VARCHAR);
     OColumn email = new OColumn("Email", ColumnType.VARCHAR);
+    @Odoo.storeColumn("image")
     OColumn image_medium = new OColumn("Image", ColumnType.BLOB);
     OColumn customer = new OColumn("Customer", ColumnType.BOOLEAN);
 

@@ -14,6 +14,7 @@ import android.util.Log;
 import com.odoo.core.rpc.helper.ODomain;
 import com.odoo.core.support.OUser;
 import com.odoo.core.utils.ODateUtils;
+import com.odoo.followup.orm.annotation.Odoo;
 import com.odoo.followup.orm.data.ListRow;
 import com.odoo.followup.orm.models.IrModel;
 import com.odoo.followup.orm.models.LocalRecordState;
@@ -34,7 +35,7 @@ public class OModel extends SQLiteOpenHelper implements BaseColumns {
 
     OColumn _id = new OColumn("Local Id", ColumnType.INTEGER).makePrimaryKey()
             .makeAtoIncrement().makeLocal();
-    OColumn id = new OColumn("Server Id", ColumnType.INTEGER);
+    OColumn id = new OColumn("Server Id", ColumnType.INTEGER).setDefaultValue(0);
     OColumn write_date = new OColumn("Write date", ColumnType.DATETIME).makeLocal().setDefaultValue("false");
     OColumn is_dirty = new OColumn("Is dirty", ColumnType.BOOLEAN).makeLocal().setDefaultValue("false");
     private String mModelName;
@@ -96,6 +97,37 @@ public class OModel extends SQLiteOpenHelper implements BaseColumns {
         return uriBuilder.build();
     }
 
+    public OColumn getColumn(String column) {
+        Field field = null;
+        try {
+            field = getClass().getDeclaredField(column);
+        } catch (NoSuchFieldException e) {
+            try {
+                field = getClass().getSuperclass().getDeclaredField(column);
+            } catch (NoSuchFieldException e1) {
+            }
+        }
+        if (field != null) {
+            field.setAccessible(true);
+            if (field.getType().isAssignableFrom(OColumn.class)) {
+                try {
+                    OColumn columnObj = (OColumn) field.get(this);
+                    columnObj.name = field.getName();
+                    columnObj.storeName = getStoreName(field);
+                    return columnObj;
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return null;
+    }
+
+    private String getStoreName(Field field) {
+        Odoo.storeColumn storeColumn = field.getAnnotation(Odoo.storeColumn.class);
+        return storeColumn != null ? storeColumn.value() : null;
+    }
+
     public List<OColumn> getColumns() {
         List<OColumn> columnList = new ArrayList<>();
         List<Field> fieldList = new ArrayList<>();
@@ -109,6 +141,7 @@ public class OModel extends SQLiteOpenHelper implements BaseColumns {
                 try {
                     OColumn column = (OColumn) field.get(this);
                     column.name = field.getName();
+                    column.storeName = getStoreName(field);
                     columnList.add(column);
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();

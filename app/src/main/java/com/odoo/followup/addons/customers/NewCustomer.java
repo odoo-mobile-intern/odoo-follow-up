@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.odoo.followup.R;
 import com.odoo.followup.addons.customers.models.ResPartner;
+import com.odoo.followup.orm.sync.OSyncUtils;
 import com.odoo.followup.utils.BitmapUtils;
 
 public class NewCustomer extends AppCompatActivity implements View.OnClickListener {
@@ -162,6 +163,7 @@ public class NewCustomer extends AppCompatActivity implements View.OnClickListen
             }
 
             partner.create(values);
+            OSyncUtils.get(this, partner).sync(new Bundle());
             Toast.makeText(this, "Contact Saved", Toast.LENGTH_SHORT).show();
             finish();
         }

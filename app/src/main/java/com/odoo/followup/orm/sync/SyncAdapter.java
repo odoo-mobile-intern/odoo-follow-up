@@ -4,9 +4,11 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.SyncResult;
 import android.os.Bundle;
+import android.provider.BaseColumns;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -18,6 +20,7 @@ import com.odoo.core.rpc.helper.utils.gson.OdooRecord;
 import com.odoo.core.rpc.helper.utils.gson.OdooResult;
 import com.odoo.core.support.OUser;
 import com.odoo.followup.orm.OModel;
+import com.odoo.followup.orm.data.ListRow;
 import com.odoo.followup.orm.models.LocalRecordState;
 
 import java.util.ArrayList;
@@ -163,6 +166,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             }
         }
 
+        // Creating record on server
+        createRecordOnServer(model);
+
         // Remove local records
         HashSet<Integer> localServerIds = new HashSet<>(model.getServerIds());
         localServerIds.removeAll(recentSyncIds);
@@ -172,6 +178,27 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
         // removing record from server
         deleteFromServer(model, syncResult);
+
+    }
+
+    private void createRecordOnServer(OModel model) {
+        List<ListRow> newRecords = model.select("id = ?", "0");
+        List<Integer> newIds = new ArrayList<>();
+        for (ListRow row : newRecords) {
+            OdooResult result = odoo.createRecord(model.getModelName(), row.toRecordValues(model));
+            if (!result.containsKey("error")) {
+                int newId = result.getInt("result");
+                ContentValues values = new ContentValues();
+                values.put("id", newId);
+                model.update(values, BaseColumns._ID + " = ?", row.getString(BaseColumns._ID));
+                newIds.add(newId);
+            } else {
+                Log.e(TAG, "" + result.get("error"));
+            }
+        }
+        if (!newIds.isEmpty()) {
+            Log.v(TAG, newIds.size() + " record(s) for model " + model.getModelName() + " created on server");
+        }
     }
 
     private void deleteFromLocal(OModel model, HashSet<Integer> checkIds, SyncResult syncResult) {
