@@ -2,6 +2,7 @@ package com.odoo.core.support;
 
 import android.graphics.Bitmap;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -23,6 +24,9 @@ public final class CBind {
     public static void setText(View view, String value) {
         if (view instanceof TextView) {
             ((TextView) view).setText(value);
+        }
+        if (view instanceof EditText) {
+            ((EditText) view).setText(value);
         }
     }
 }

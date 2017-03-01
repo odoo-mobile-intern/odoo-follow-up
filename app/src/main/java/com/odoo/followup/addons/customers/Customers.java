@@ -10,6 +10,7 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -22,7 +23,7 @@ import com.odoo.followup.utils.BitmapUtils;
 import com.odoo.followup.utils.support.BaseFragment;
 
 public class Customers extends BaseFragment implements OListAdapter.OnViewBindListener,
-        LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
+        LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, AdapterView.OnItemClickListener {
     private ResPartner contacts;
     private OListAdapter listAdapter;
 
@@ -42,6 +43,7 @@ public class Customers extends BaseFragment implements OListAdapter.OnViewBindLi
         listAdapter = new OListAdapter(getContext(), null, R.layout.partner_list_item);
         contactList.setAdapter(listAdapter);
         listAdapter.setOnViewBindListener(this);
+        contactList.setOnItemClickListener(this);
         getLoaderManager().initLoader(0, null, this);
     }
 
@@ -97,5 +99,14 @@ public class Customers extends BaseFragment implements OListAdapter.OnViewBindLi
                 break;
         }
 
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+
+        Cursor cr = (Cursor) listAdapter.getItem(position);
+        Intent intent = new Intent(getContext(), CustomerDetail.class);
+        intent.putExtra("id", cr.getInt(cr.getColumnIndex("id")));
+        startActivity(intent);
     }
 }

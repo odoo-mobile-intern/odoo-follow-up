@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,7 +40,7 @@ public class ProductDetail extends AppCompatActivity {
     }
 
     private void setProductDetail() {
-        List<ListRow> rows = product.select("_id = ? ", String.valueOf(product_id));
+        List<ListRow> rows = product.select("id = ? ", String.valueOf(product_id));
         for (ListRow row : rows) {
             setTitle(row.getString("name"));
 
