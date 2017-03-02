@@ -49,8 +49,8 @@ public class ListRow extends HashMap<String, Object> {
             String columnName = column.getStoreColumn();
             if (!column.isLocal) {
                 switch (column.columnType) {
-                    case VARCHAR:
                     case BLOB:
+                    case VARCHAR:
                     case DATETIME:
                         if (!getString(key).equals("false"))
                             recordValues.put(columnName, get(key));
@@ -75,7 +75,11 @@ public class ListRow extends HashMap<String, Object> {
                     case MANY2ONE:
                         if (get(key) != null && !getString(key).equals("false")) {
                             OModel relModel = model.createModel(column.relModel);
-                            recordValues.put(columnName, relModel.selectServerId(getInt(key)));
+                            int rel_id = relModel.selectRowId(getInt(key));
+                            if (rel_id != OModel.INVALID_ROW_ID)
+                                recordValues.put(columnName, relModel.selectServerId(getInt(key)));
+                            else
+                                recordValues.put(columnName, false);
                         } else {
                             recordValues.put(columnName, false);
                         }
