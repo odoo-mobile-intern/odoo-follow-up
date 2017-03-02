@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.SyncResult;
 
 import com.odoo.core.rpc.helper.utils.gson.OdooRecord;
+import com.odoo.core.utils.ODateUtils;
 import com.odoo.followup.orm.OColumn;
 import com.odoo.followup.orm.OModel;
 
@@ -16,6 +17,7 @@ public class OdooRecordUtils {
 
     private OModel model;
     private SyncResult syncResult;
+    private HashSet<Integer> recentSyncIds = new HashSet<>();
     private List<OColumn> columns = new ArrayList<>();
     private List<ContentValues> recordValuesToUpdate = new ArrayList<>();
     private List<ContentValues> recordValuesToInsert = new ArrayList<>();
@@ -33,6 +35,8 @@ public class OdooRecordUtils {
 
     public void processRecord(OdooRecord record) {
         ContentValues values = new ContentValues();
+        // Storing server write date
+        values.put("write_date", record.getString("write_date"));
         for (OColumn column : columns) {
             if (!column.isLocal) {
                 switch (column.columnType) {
@@ -72,10 +76,23 @@ public class OdooRecordUtils {
         int row_id = model.selectRowId(record.getInt("id"));
         if (row_id == OModel.INVALID_ROW_ID) {
             recordValuesToInsert.add(values);
+            recentSyncIds.add(record.getInt("id"));
         } else {
             values.put("_id", row_id);
-            recordValuesToUpdate.add(values);
+            if (!isLocalLatest(row_id, values.getAsString("write_date"))) {
+                recordValuesToUpdate.add(values);
+                recentSyncIds.add(record.getInt("id"));
+            }
         }
+    }
+
+    public HashSet<Integer> getRecentSyncIds() {
+        return recentSyncIds;
+    }
+
+    private boolean isLocalLatest(int row_id, String server_write_date) {
+        String write_date = model.selectWriteDate(row_id);
+        return (write_date != null && ODateUtils.isLatest(write_date, server_write_date));
     }
 
     private void addRelRecordToSync(String model, int server_id) {

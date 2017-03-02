@@ -52,4 +52,9 @@ public class ODateUtils {
         return createDate(createDateObject(dateTime, dateFormat, true), dateFormat, true);
     }
 
+    public static boolean isLatest(String first_date, String second_date) {
+        Date date = createDateObject(first_date, DEFAULT_FORMAT, false);
+        Date secondDate = createDateObject(second_date, DEFAULT_FORMAT, false);
+        return date.compareTo(secondDate) > 0;
+    }
 }

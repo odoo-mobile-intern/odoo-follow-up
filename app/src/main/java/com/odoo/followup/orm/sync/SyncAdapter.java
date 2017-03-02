@@ -127,12 +127,10 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         OdooRecordUtils recordUtils = OdooRecordUtils.getInstance(model, syncResult);
         if (syncResult != null)
             Log.v(TAG, "Processing " + result.getTotalRecords() + " record(s) for model " + model.getModelName());
-        HashSet<Integer> recentSyncIds = new HashSet<>();
         for (OdooRecord record : result.getRecords()) {
             if (canUpdateOrInsert(model, record)) {
                 recordUtils.processRecord(record);
             }
-            recentSyncIds.add(record.getDouble("id").intValue());
         }
 
         // batch insert
@@ -166,6 +164,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             }
         }
 
+        HashSet<Integer> recentSyncIds = recordUtils.getRecentSyncIds();
+
         // Creating record on server
         createRecordOnServer(model);
 
@@ -179,6 +179,25 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         // removing record from server
         deleteFromServer(model, syncResult);
 
+        // Updating record on server
+        updateRecordOnServer(model, recentSyncIds);
+    }
+
+    private void updateRecordOnServer(OModel model, HashSet<Integer> recentSyncIds) {
+        if (model.getLastSyncDate() != null) {
+            List<Integer> updatedIds = new ArrayList<>();
+            for (ListRow record : model.select("write_date > ? and id not in(" + TextUtils.join(",", recentSyncIds) + ")", model.getLastSyncDate())) {
+                OdooResult result = odoo.updateRecord(model.getModelName(), record.toRecordValues(model), record.getInt("id"));
+                if (!result.containsKey("error")) {
+                    updatedIds.add(record.getInt("id"));
+                } else {
+                    Log.e(TAG, "" + result.get("error"));
+                }
+            }
+            if (!updatedIds.isEmpty()) {
+                Log.v(TAG, updatedIds.size() + " record(s) for model " + model.getModelName() + " updated on server");
+            }
+        }
     }
 
     private void createRecordOnServer(OModel model) {

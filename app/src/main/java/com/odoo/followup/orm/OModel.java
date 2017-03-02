@@ -37,7 +37,7 @@ public class OModel extends SQLiteOpenHelper implements BaseColumns {
             .makeAtoIncrement().makeLocal();
     OColumn id = new OColumn("Server Id", ColumnType.INTEGER).setDefaultValue(0);
     OColumn write_date = new OColumn("Write date", ColumnType.DATETIME).makeLocal().setDefaultValue("false");
-    OColumn is_dirty = new OColumn("Is dirty", ColumnType.BOOLEAN).makeLocal().setDefaultValue("false");
+
     private String mModelName;
     private Context mContext;
 
@@ -158,6 +158,7 @@ public class OModel extends SQLiteOpenHelper implements BaseColumns {
             return Integer.parseInt(uri.getLastPathSegment());
         } else {
             SQLiteDatabase database = getWritableDatabase();
+            values.put("write_date", ODateUtils.getUTCDateTime());
             id = database.insert(getTableName(), null, values);
             database.close();
             return id.intValue();
@@ -179,9 +180,15 @@ public class OModel extends SQLiteOpenHelper implements BaseColumns {
 
     public int update(ContentValues values, String where, String... args) {
         SQLiteDatabase database = getReadableDatabase();
+        values.put("write_date", ODateUtils.getUTCDateTime());
         int id = database.update(getTableName(), values, where, args);
         database.close();
         return id;
+    }
+
+    public int update(ContentValues values, int row_id) {
+        return mContext.getContentResolver().update(Uri.withAppendedPath(getUri(), row_id + ""),
+                values, null, null);
     }
 
     public void deleteAll() {
@@ -258,10 +265,14 @@ public class OModel extends SQLiteOpenHelper implements BaseColumns {
     }
 
     public List<ListRow> select(String where, String... args) {
+        return select(null, where, args);
+    }
+
+    public List<ListRow> select(String[] projection, String where, String... args) {
         List<ListRow> rows = new ArrayList<>();
         SQLiteDatabase database = getReadableDatabase();
         args = args.length > 0 ? args : null;
-        Cursor cursor = database.query(getTableName(), null, where, args, null, null, "_id DESC");
+        Cursor cursor = database.query(getTableName(), projection, where, args, null, null, "_id DESC");
         if (cursor.moveToFirst()) {
             do {
                 rows.add(new ListRow(cursor));
@@ -374,5 +385,13 @@ public class OModel extends SQLiteOpenHelper implements BaseColumns {
 
     public boolean isEmpty() {
         return count() <= 0;
+    }
+
+    public String selectWriteDate(int row_id) {
+        List<ListRow> rows = select(new String[]{"write_date"}, "_id = ?", row_id + "");
+        if (!rows.isEmpty()) {
+            return rows.get(0).getString("write_date");
+        }
+        return null;
     }
 }

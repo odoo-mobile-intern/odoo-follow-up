@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.odoo.core.utils.ODateUtils;
 import com.odoo.followup.orm.OModel;
 import com.odoo.followup.orm.models.ModelRegistry;
 
@@ -38,11 +39,10 @@ public class BaseContentProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String order) {
         OModel model = getModel(getContext(), uri);
+        setMatcher(model);
         SQLiteDatabase db = model.getWritableDatabase();
         Cursor cr = db.query(model.getTableName(), projection, selection, selectionArgs, null, null, order);
-        Context ctx = getContext();
-        if (cr != null && ctx != null)
-            cr.setNotificationUri(ctx.getContentResolver(), uri);
+        notifyDataChange(uri);
         return cr;
     }
 
@@ -56,9 +56,12 @@ public class BaseContentProvider extends ContentProvider {
     @Override
     public Uri insert(@NonNull Uri uri, ContentValues contentValues) {
         OModel model = getModel(getContext(), uri);
+        setMatcher(model);
         SQLiteDatabase db = model.getWritableDatabase();
+        if (!contentValues.containsKey("write_date")) {
+            contentValues.put("write_date", ODateUtils.getUTCDateTime());
+        }
         long new_id = db.insert(model.getTableName(), null, contentValues);
-        db.close();
         notifyDataChange(uri);
         return Uri.withAppendedPath(uri, new_id + "");
     }
@@ -66,8 +69,10 @@ public class BaseContentProvider extends ContentProvider {
     @Override
     public int delete(Uri uri, String s, String[] strings) {
         OModel model = getModel(getContext(), uri);
+        setMatcher(model);
+        int count = model.delete(s, strings);
         notifyDataChange(uri);
-        return 0;
+        return count;
     }
 
     @Override
@@ -76,19 +81,20 @@ public class BaseContentProvider extends ContentProvider {
         setMatcher(model);
         int match = matcher.match(uri);
         int count = 0;
-        SQLiteDatabase db = null;
+        if (!contentValues.containsKey("write_date")) {
+            contentValues.put("write_date", ODateUtils.getUTCDateTime());
+        }
         switch (match) {
             case COLLECTION:
                 break;
             case SINGLE_ROW:
-                db = model.getWritableDatabase();
+                SQLiteDatabase db = model.getWritableDatabase();
                 int updateId = Integer.parseInt(uri.getLastPathSegment());
                 where = "_id = ?";
                 args = new String[]{updateId + ""};
                 count = db.update(model.getTableName(), contentValues, where, args);
                 break;
         }
-        if (db != null) db.close();
         notifyDataChange(uri);
         return count;
     }

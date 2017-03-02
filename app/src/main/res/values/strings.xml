@@ -39,5 +39,6 @@
     <string name="title_preferences">Preferences</string>
     <string name="getting_data">Getting data...</string>
     <string name="label_products">Products</string>
+    <string name="title_refresh_data">Refresh Data</string>
 
 </resources>
