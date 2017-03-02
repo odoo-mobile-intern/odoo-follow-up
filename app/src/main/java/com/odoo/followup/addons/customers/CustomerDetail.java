@@ -19,6 +19,7 @@ import com.odoo.core.support.CBind;
 import com.odoo.followup.R;
 import com.odoo.followup.addons.customers.models.ResPartner;
 import com.odoo.followup.orm.data.ListRow;
+import com.odoo.followup.orm.sync.OSyncUtils;
 import com.odoo.followup.utils.BitmapUtils;
 
 import java.util.List;
@@ -294,6 +295,7 @@ public class CustomerDetail extends AppCompatActivity implements View.OnClickLis
 
             partner.update(values, "id = ?", String.valueOf(customer_id));
             Toast.makeText(this, "Customer Updated", Toast.LENGTH_SHORT).show();
+            OSyncUtils.get(this, partner).sync(null);
             finish();
         }
     }

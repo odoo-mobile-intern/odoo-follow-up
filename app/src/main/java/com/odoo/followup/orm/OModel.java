@@ -191,6 +191,7 @@ public class OModel extends SQLiteOpenHelper implements BaseColumns {
         SQLiteDatabase database = getReadableDatabase();
         values.put("write_date", ODateUtils.getUTCDateTime());
         int id = database.update(getTableName(), values, where, args);
+        getContext().getContentResolver().notifyChange(getUri(), null);
         database.close();
         return id;
     }
