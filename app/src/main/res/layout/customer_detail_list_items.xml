@@ -2,13 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/android_white"
+    android:background="#ebebeb"
+
     android:orientation="vertical">
     <!--TextView Layout-->
     <LinearLayout
         android:id="@+id/viewLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/android_white"
         android:orientation="vertical">
 
         <LinearLayout
@@ -332,6 +334,7 @@
         android:id="@+id/editLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/android_white"
         android:orientation="vertical"
         android:visibility="gone">
 
@@ -647,4 +650,9 @@
             </RelativeLayout>
         </LinearLayout>
     </LinearLayout>
+
+    <com.odoo.widget.chatter.ChatterView
+        android:id="@+id/chatterView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 </LinearLayout>

@@ -122,7 +122,7 @@ public class Customers extends BaseFragment implements OListAdapter.OnViewBindLi
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         Cursor cr = (Cursor) listAdapter.getItem(position);
         Intent intent = new Intent(getContext(), CustomerDetail.class);
-        intent.putExtra("id", cr.getInt(cr.getColumnIndex("id")));
+        intent.putExtra("_id", cr.getInt(cr.getColumnIndex("_id")));
         startActivity(intent);
     }
 }

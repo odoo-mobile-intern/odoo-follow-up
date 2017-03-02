@@ -8,7 +8,8 @@ public enum ColumnType {
     BOOLEAN("BOOLEAN"),
     BLOB("BLOB"),
     MANY2ONE("INTEGER"),
-    DATETIME("VARCHAR");
+    DATETIME("VARCHAR"),
+    TEXT("TEXT");
 
     String type;
 

@@ -3,6 +3,7 @@ package com.odoo.followup.orm.models;
 import android.content.Context;
 
 import com.odoo.followup.addons.customers.models.ResPartner;
+import com.odoo.followup.addons.mail.models.MailMessage;
 import com.odoo.followup.addons.sales.models.CRMLead;
 import com.odoo.followup.addons.sales.models.ProductTemplate;
 import com.odoo.followup.orm.OModel;
@@ -20,6 +21,7 @@ public class ModelRegistry {
         model.put("res.country", new ResCountry(context));
         model.put("crm.lead", new CRMLead(context));
         model.put("product.template", new ProductTemplate(context));
+        model.put("mail.message", new MailMessage(context));
         return model;
     }
 

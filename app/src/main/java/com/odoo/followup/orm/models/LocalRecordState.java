@@ -24,7 +24,7 @@ public class LocalRecordState extends OModel {
     }
 
     public boolean isValid(String model, int server_id, String write_date) {
-        List<ListRow> records = select("model = ? and server_id = ?", model, server_id + "");
+        List<ListRow> records = select(null, null, "model = ? and server_id = ?", model, server_id + "");
         if (!records.isEmpty()) {
             ListRow row = records.get(0);
             Date delete_date = ODateUtils.createDateObject(row.getString("delete_on"), ODateUtils.DEFAULT_FORMAT, false);
@@ -50,7 +50,7 @@ public class LocalRecordState extends OModel {
 
     public List<Integer> getServerIds(String model) {
         List<Integer> ids = new ArrayList<>();
-        List<ListRow> records = select("model = ?", model);
+        List<ListRow> records = select("model = ?", new String[]{model});
         for (ListRow row : records) {
             ids.add(row.getInt("server_id"));
         }

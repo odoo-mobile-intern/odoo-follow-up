@@ -235,7 +235,7 @@ public class OModel extends SQLiteOpenHelper implements BaseColumns {
     }
 
     public List<ListRow> select() {
-        return select(null);
+        return select(null, null);
     }
 
     public int selectRowId(int server_id) {
@@ -274,15 +274,25 @@ public class OModel extends SQLiteOpenHelper implements BaseColumns {
         return ids;
     }
 
-    public List<ListRow> select(String where, String... args) {
-        return select(null, where, args);
+    public ListRow browse(int row_id) {
+        List<ListRow> rows = select("_id = ?", new String[]{row_id + ""});
+        return rows.isEmpty() ? null : rows.get(0);
     }
 
-    public List<ListRow> select(String[] projection, String where, String... args) {
+    public List<ListRow> select(String where, String[] args) {
+        return select(null, null, where, args);
+    }
+
+//    public List<ListRow> select(String orderBy, String where, String... args) {
+//        return select(null, orderBy, where, args);
+//    }
+
+    public List<ListRow> select(String[] projection, String orderBy, String where, String... args) {
         List<ListRow> rows = new ArrayList<>();
         SQLiteDatabase database = getReadableDatabase();
         args = args.length > 0 ? args : null;
-        Cursor cursor = database.query(getTableName(), projection, where, args, null, null, "_id DESC");
+        orderBy = orderBy == null ? "_id DESC" : orderBy;
+        Cursor cursor = database.query(getTableName(), projection, where, args, null, null, orderBy);
         if (cursor.moveToFirst()) {
             do {
                 rows.add(new ListRow(cursor));
@@ -364,7 +374,7 @@ public class OModel extends SQLiteOpenHelper implements BaseColumns {
 
     public String getLastSyncDate() {
         IrModel model = new IrModel(mContext);
-        List<ListRow> items = model.select("model = ?", getModelName());
+        List<ListRow> items = model.select("model = ?", new String[]{getModelName()});
         if (!items.isEmpty()) {
             return items.get(0).getString("last_sync_on");
         }
@@ -403,5 +413,10 @@ public class OModel extends SQLiteOpenHelper implements BaseColumns {
             return rows.get(0).getString("write_date");
         }
         return null;
+    }
+
+    public String getName(int row_id) {
+        ListRow row = browse(row_id);
+        return row != null ? row.getString("name") : "false";
     }
 }

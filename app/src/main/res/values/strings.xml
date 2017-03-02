@@ -45,4 +45,7 @@
     <string name="authority_app_data">com.odoo.followup.appdata.sync</string>
     <string name="authority_crm_lead">com.odoo.followup.leads.sync</string>
     <string name="authority_product_template">com.odoo.followup.products.sync</string>
+    <string name="label_new_message">New Message</string>
+    <string name="label_log_an_internal_note">Log an internal note</string>
+    <string name="label_or">OR</string>
 </resources>

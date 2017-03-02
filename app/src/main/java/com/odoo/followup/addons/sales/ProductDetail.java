@@ -40,7 +40,7 @@ public class ProductDetail extends AppCompatActivity {
     }
 
     private void setProductDetail() {
-        List<ListRow> rows = product.select("id = ? ", String.valueOf(product_id));
+        List<ListRow> rows = product.select("id = ? ", new String[]{String.valueOf(product_id)});
         for (ListRow row : rows) {
             setTitle(row.getString("name"));
 

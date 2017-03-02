@@ -38,6 +38,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     private int limit = 80;
     private OModel syncModel;
     private HashMap<String, HashSet<Integer>> relationRecordsSyncFinished = new HashMap<>();
+    private ODomain customDomain;
+    private boolean onlySync = false;
 
     public SyncAdapter(Context context, boolean autoInitialize, OModel syncModel) {
         super(context, autoInitialize);
@@ -52,33 +54,33 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         mUser = getUser(account);
         try {
             odoo = Odoo.createWithUser(mContext, mUser);
-            if (authority.equals("com.odoo.followup.appdata.sync")) {
-                // Sync app data with multiple models
-                // fixme
-                syncAppData();
-            } else {
-                if (syncModel != null) {
-                    Log.v(TAG, "Sync started for " + syncModel.getModelName());
-                    syncData(syncModel, null, syncResult);
+//            if (authority.equals("com.odoo.followup.appdata.sync")) {
+//                 Sync app data with multiple models
+//                 fixme
+//                syncAppData();
+//            } else {
+            if (syncModel != null) {
+                Log.v(TAG, "Sync started for " + syncModel.getModelName());
+                syncData(syncModel, null, syncResult);
 
-                    // Sync finished
-                    syncModel.updateLastSyncDate();
-                    if (syncResult != null) {
-                        if (syncResult.stats.numInserts > 0)
-                            Log.v(TAG, "Inserted " + syncResult.stats.numInserts + " record(s).");
-                        if (syncResult.stats.numUpdates > 0)
-                            Log.v(TAG, "Updated " + syncResult.stats.numUpdates + " record(s).");
-                        if (syncResult.stats.numDeletes > 0)
-                            Log.v(TAG, "Deleted " + syncResult.stats.numDeletes + " record(s) from local.");
-                        if (syncResult.stats.numSkippedEntries > 0)
-                            Log.v(TAG, "Deleted " + syncResult.stats.numSkippedEntries + " record(s) from server.");
+                // Sync finished
+                syncModel.updateLastSyncDate();
+                if (syncResult != null) {
+                    if (syncResult.stats.numInserts > 0)
+                        Log.v(TAG, "Inserted " + syncResult.stats.numInserts + " record(s).");
+                    if (syncResult.stats.numUpdates > 0)
+                        Log.v(TAG, "Updated " + syncResult.stats.numUpdates + " record(s).");
+                    if (syncResult.stats.numDeletes > 0)
+                        Log.v(TAG, "Deleted " + syncResult.stats.numDeletes + " record(s) from local.");
+                    if (syncResult.stats.numSkippedEntries > 0)
+                        Log.v(TAG, "Deleted " + syncResult.stats.numSkippedEntries + " record(s) from server.");
 
-                        Log.v(TAG, "Sync finished for " + syncModel.getModelName());
-                    }
-                } else {
-                    Log.e(TAG, "No model specified for sync service :" + authority);
+                    Log.v(TAG, "Sync finished for " + syncModel.getModelName());
                 }
+            } else {
+                Log.e(TAG, "No model specified for sync service :" + authority);
             }
+//            }
         } catch (OdooVersionException e) {
             e.printStackTrace();
         }
@@ -105,14 +107,18 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         OdooFields fields = new OdooFields(model.getServerColumns());
         ODomain domain = new ODomain();
 
-        if (syncDomain != null) {
-            domain.append(syncDomain);
-        } else {
-            domain.append(model.syncDomain());
-            // create date
-            if (model.getLastSyncDate() != null) {
-                domain.add("write_date", ">", model.getLastSyncDate());
+        if (customDomain == null || syncResult == null) {
+            if (syncDomain != null) {
+                domain.append(syncDomain);
+            } else {
+                domain.append(model.syncDomain());
+                // create date
+                if (model.getLastSyncDate() != null) {
+                    domain.add("write_date", ">", model.getLastSyncDate());
+                }
             }
+        } else {
+            domain = customDomain;
         }
         OdooResult result = odoo.searchRead(model.getModelName(), fields, domain, offset, limit,
                 "create_date DESC");
@@ -143,50 +149,52 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         if (syncResult != null)
             syncResult.stats.numUpdates += recordUtils.getRecordValuesToUpdate().size();
 
-        // creating list for relation records to sync
-        if (recordUtils.getRelationRecordToSync().size() > 0) {
-            List<String> relModels = new ArrayList<>(recordUtils.getRelationRecordToSync().keySet());
-            for (String relModel : relModels) {
-                OModel relModelObj = model.createModel(relModel);
-                HashSet<Integer> relModelIds = recordUtils.getRelationRecordToSync().get(relModel);
-                if (relationRecordsSyncFinished.containsKey(relModel)) {
-                    HashSet<Integer> idsDone = relationRecordsSyncFinished.get(relModel);
-                    relModelIds.removeAll(idsDone);
-                }
-                if (!relModelIds.isEmpty()) {
-                    addRelationRecordSynced(relModel, relModelIds);
-                    Log.v(TAG, "Processing relation " + relModelIds.size() + " record(s) for " + relModel
-                            + (syncResult == null ? " of " + model.getModelName() : ""));
-                    ODomain relDomain = new ODomain();
-                    relDomain.add("id", "in", new ArrayList<>(relModelIds));
-                    syncData(relModelObj, relDomain, null);
+        if (!onlySync) {
+            // creating list for relation records to sync
+            if (recordUtils.getRelationRecordToSync().size() > 0) {
+                List<String> relModels = new ArrayList<>(recordUtils.getRelationRecordToSync().keySet());
+                for (String relModel : relModels) {
+                    OModel relModelObj = model.createModel(relModel);
+                    HashSet<Integer> relModelIds = recordUtils.getRelationRecordToSync().get(relModel);
+                    if (relationRecordsSyncFinished.containsKey(relModel)) {
+                        HashSet<Integer> idsDone = relationRecordsSyncFinished.get(relModel);
+                        relModelIds.removeAll(idsDone);
+                    }
+                    if (!relModelIds.isEmpty()) {
+                        addRelationRecordSynced(relModel, relModelIds);
+                        Log.v(TAG, "Processing relation " + relModelIds.size() + " record(s) for " + relModel
+                                + (syncResult == null ? " of " + model.getModelName() : ""));
+                        ODomain relDomain = new ODomain();
+                        relDomain.add("id", "in", new ArrayList<>(relModelIds));
+                        syncData(relModelObj, relDomain, null);
+                    }
                 }
             }
+
+            HashSet<Integer> recentSyncIds = recordUtils.getRecentSyncIds();
+
+            // Creating record on server
+            createRecordOnServer(model);
+
+            // Remove local records
+            HashSet<Integer> localServerIds = new HashSet<>(model.getServerIds());
+            localServerIds.removeAll(recentSyncIds);
+            if (!localServerIds.isEmpty()) {
+                deleteFromLocal(model, localServerIds, syncResult);
+            }
+
+            // removing record from server
+            deleteFromServer(model, syncResult);
+
+            // Updating record on server
+            updateRecordOnServer(model, recentSyncIds);
         }
-
-        HashSet<Integer> recentSyncIds = recordUtils.getRecentSyncIds();
-
-        // Creating record on server
-        createRecordOnServer(model);
-
-        // Remove local records
-        HashSet<Integer> localServerIds = new HashSet<>(model.getServerIds());
-        localServerIds.removeAll(recentSyncIds);
-        if (!localServerIds.isEmpty()) {
-            deleteFromLocal(model, localServerIds, syncResult);
-        }
-
-        // removing record from server
-        deleteFromServer(model, syncResult);
-
-        // Updating record on server
-        updateRecordOnServer(model, recentSyncIds);
     }
 
     private void updateRecordOnServer(OModel model, HashSet<Integer> recentSyncIds) {
         if (model.getLastSyncDate() != null) {
             List<Integer> updatedIds = new ArrayList<>();
-            for (ListRow record : model.select("write_date > ? and id not in(" + TextUtils.join(",", recentSyncIds) + ")", model.getLastSyncDate())) {
+            for (ListRow record : model.select(null, null, "write_date > ? and id not in(" + TextUtils.join(",", recentSyncIds) + ")", model.getLastSyncDate())) {
                 OdooResult result = odoo.updateRecord(model.getModelName(), record.toRecordValues(model), record.getInt("id"));
                 if (!result.containsKey("error")) {
                     updatedIds.add(record.getInt("id"));
@@ -201,7 +209,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     private void createRecordOnServer(OModel model) {
-        List<ListRow> newRecords = model.select("id = ?", "0");
+        List<ListRow> newRecords = model.select("id = ?", new String[]{"0"});
         List<Integer> newIds = new ArrayList<>();
         for (ListRow row : newRecords) {
             OdooResult result = odoo.createRecord(model.getModelName(), row.toRecordValues(model));
@@ -277,6 +285,11 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         relationRecordsSyncFinished.put(model, recordIds);
     }
 
+    public SyncAdapter withDomain(ODomain domain) {
+        customDomain = domain;
+        return this;
+    }
+
     private OUser getUser(Account account) {
         OUser user = new OUser();
         user.setHost(accountManager.getUserData(account, "host"));
@@ -284,5 +297,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         user.setDatabase(accountManager.getUserData(account, "database"));
         user.setSession_id(accountManager.getUserData(account, "session_id"));
         return user;
+    }
+
+    public void onlySync() {
+        onlySync = true;
     }
 }

@@ -44,6 +44,7 @@ public class OUser {
         if (accounts.length > 0) {
             OUser user = new OUser();
             user.fillFromAccount(accountManager, accounts[0]);
+            user.setAccount(accounts[0]);
             return user;
         }
         return null;
