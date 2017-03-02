@@ -54,7 +54,6 @@ public class Customers extends BaseFragment implements OListAdapter.OnViewBindLi
 
     @Override
     public void onViewBind(View view, Cursor cursor, ListRow row) {
-
         String strEmail = row.getString("email");
         String strCity = row.getString("city");
 
@@ -64,7 +63,6 @@ public class Customers extends BaseFragment implements OListAdapter.OnViewBindLi
 
         view.findViewById(R.id.text_email).setVisibility(strEmail.equals("false")
                 ? View.GONE : View.VISIBLE);
-
         view.findViewById(R.id.text_city).setVisibility(strCity.equals("false")
                 ? View.GONE : View.VISIBLE);
 
@@ -74,7 +72,6 @@ public class Customers extends BaseFragment implements OListAdapter.OnViewBindLi
         else
             CBind.setImage(view.findViewById(R.id.avatar), BitmapUtils.getBitmapImage(getContext(),
                     row.getString("image_medium")));
-
     }
 
     @Override
@@ -123,7 +120,6 @@ public class Customers extends BaseFragment implements OListAdapter.OnViewBindLi
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-
         Cursor cr = (Cursor) listAdapter.getItem(position);
         Intent intent = new Intent(getContext(), CustomerDetail.class);
         intent.putExtra("id", cr.getInt(cr.getColumnIndex("id")));

@@ -82,13 +82,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
         editUsername.setError(null);
         if (editUsername.getText().toString().trim().isEmpty()) {
-            editUsername.setError(getString(R.string.username_required));
+            editUsername.setError(getString(R.string.error_username_required));
             editUsername.requestFocus();
             return false;
         }
         editPassword.setError(null);
         if (editPassword.getText().toString().trim().isEmpty()) {
-            editPassword.setError(getString(R.string.password_required));
+            editPassword.setError(getString(R.string.error_password_required));
             editPassword.requestFocus();
             return false;
         }
