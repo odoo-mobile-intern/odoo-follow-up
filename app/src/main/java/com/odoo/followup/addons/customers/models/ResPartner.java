@@ -2,6 +2,7 @@ package com.odoo.followup.addons.customers.models;
 
 import android.content.Context;
 
+import com.odoo.followup.R;
 import com.odoo.followup.orm.ColumnType;
 import com.odoo.followup.orm.OColumn;
 import com.odoo.followup.orm.OModel;
@@ -33,6 +34,6 @@ public class ResPartner extends OModel {
 
     @Override
     public String authority() {
-        return "com.odoo.followup.contacts.sync";
+        return getAuthority(R.string.authority_res_partner);
     }
 }

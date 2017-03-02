@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.provider.BaseColumns;
+import android.support.annotation.StringRes;
 import android.util.Log;
 
 import com.odoo.core.rpc.helper.ODomain;
@@ -87,6 +88,14 @@ public class OModel extends SQLiteOpenHelper implements BaseColumns {
 
     public String authority() {
         return "com.odoo.followup.appdata.sync";
+    }
+
+    public Context getContext() {
+        return mContext;
+    }
+
+    public String getAuthority(@StringRes int res_id) {
+        return mContext.getString(res_id);
     }
 
     public Uri getUri() {

@@ -2,6 +2,7 @@ package com.odoo.followup.addons.sales.models;
 
 import android.content.Context;
 
+import com.odoo.followup.R;
 import com.odoo.followup.orm.ColumnType;
 import com.odoo.followup.orm.OColumn;
 import com.odoo.followup.orm.OModel;
@@ -21,6 +22,6 @@ public class ProductTemplate extends OModel {
 
     @Override
     public String authority() {
-        return "com.odoo.followup.products.sync";
+        return getAuthority(R.string.authority_product_template);
     }
 }

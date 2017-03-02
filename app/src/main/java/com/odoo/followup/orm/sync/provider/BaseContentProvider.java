@@ -42,7 +42,7 @@ public class BaseContentProvider extends ContentProvider {
         setMatcher(model);
         SQLiteDatabase db = model.getWritableDatabase();
         Cursor cr = db.query(model.getTableName(), projection, selection, selectionArgs, null, null, order);
-        notifyDataChange(uri);
+        cr.setNotificationUri(getContext().getContentResolver(), uri);
         return cr;
     }
 
@@ -62,6 +62,7 @@ public class BaseContentProvider extends ContentProvider {
             contentValues.put("write_date", ODateUtils.getUTCDateTime());
         }
         long new_id = db.insert(model.getTableName(), null, contentValues);
+        db.close();
         notifyDataChange(uri);
         return Uri.withAppendedPath(uri, new_id + "");
     }
@@ -93,6 +94,7 @@ public class BaseContentProvider extends ContentProvider {
                 where = "_id = ?";
                 args = new String[]{updateId + ""};
                 count = db.update(model.getTableName(), contentValues, where, args);
+                db.close();
                 break;
         }
         notifyDataChange(uri);

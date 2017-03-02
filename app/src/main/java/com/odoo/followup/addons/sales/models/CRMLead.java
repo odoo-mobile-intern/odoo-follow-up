@@ -3,6 +3,7 @@ package com.odoo.followup.addons.sales.models;
 import android.content.Context;
 
 import com.odoo.core.rpc.helper.ODomain;
+import com.odoo.followup.R;
 import com.odoo.followup.orm.ColumnType;
 import com.odoo.followup.orm.OColumn;
 import com.odoo.followup.orm.OModel;
@@ -24,6 +25,6 @@ public class CRMLead extends OModel {
 
     @Override
     public String authority() {
-        return "com.odoo.followup.leads.sync";
+        return getAuthority(R.string.authority_crm_lead);
     }
 }

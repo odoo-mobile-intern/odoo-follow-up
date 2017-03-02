@@ -48,7 +48,7 @@
         <!-- App Data Provider -->
         <provider
             android:name=".orm.sync.provider.BaseContentProvider"
-            android:authorities="com.odoo.followup.appdata.sync"
+            android:authorities="@string/authority_app_data"
             android:exported="false"
             android:label="@string/label_app_data"
             android:syncable="true" />
@@ -69,7 +69,7 @@
         <!-- Contacts -->
         <provider
             android:name=".addons.customers.providers.ContactsProvider"
-            android:authorities="com.odoo.followup.contacts.sync"
+            android:authorities="@string/authority_res_partner"
             android:exported="false"
             android:label="@string/label_contacts"
             android:syncable="true" />
@@ -89,7 +89,7 @@
         <!-- Lead -->
         <provider
             android:name=".addons.sales.providers.LeadProvider"
-            android:authorities="com.odoo.followup.leads.sync"
+            android:authorities="@string/authority_crm_lead"
             android:exported="false"
             android:label="@string/label_leads"
             android:syncable="true" />
@@ -110,7 +110,7 @@
         <!-- Lead -->
         <provider
             android:name=".addons.sales.providers.ProductProvider"
-            android:authorities="com.odoo.followup.products.sync"
+            android:authorities="@string/authority_product_template"
             android:exported="false"
             android:label="@string/label_products"
             android:syncable="true" />
@@ -138,7 +138,7 @@
         <activity android:name=".addons.customers.NewCustomer" />
         <activity android:name=".addons.sales.ProductDetail" />
         <activity android:name=".UserProfile" />
-        <activity android:name=".addons.customers.CustomerDetail"></activity>
+        <activity android:name=".addons.customers.CustomerDetail" />
     </application>
 
 </manifest>
