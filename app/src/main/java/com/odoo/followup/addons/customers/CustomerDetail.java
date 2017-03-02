@@ -32,6 +32,7 @@ public class CustomerDetail extends AppCompatActivity implements View.OnClickLis
     private int customer_id;
     private CollapsingToolbarLayout collapseToolbar;
     private EditText editName;
+    private String strCustomerImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +66,7 @@ public class CustomerDetail extends AppCompatActivity implements View.OnClickLis
         List<ListRow> rows = partner.select("id = ?", String.valueOf(customer_id));
         for (ListRow row : rows) {
             collapseToolbar.setTitle(row.getString("name"));
+            strCustomerImage = row.getString("image_medium");
 
             CBind.setText(findViewById(R.id.textMobileNumber), row.getString("mobile"));
             CBind.setText(findViewById(R.id.textPhoneNumber), row.getString("phone"));
@@ -226,10 +228,7 @@ public class CustomerDetail extends AppCompatActivity implements View.OnClickLis
                 if (extras != null) {
                     Bitmap bitmap = extras.getParcelable("data");
                     customerImage.setImageBitmap(bitmap);
-                    String stringImage = BitmapUtils.bitmapToBase64(bitmap);
-                    ContentValues values = new ContentValues();
-                    values.put("image_medium", stringImage);
-                    partner.update(values, "id = ? ", String.valueOf(customer_id));
+                    strCustomerImage = BitmapUtils.bitmapToBase64(bitmap);
                 }
             } else {
                 NavUtils.getParentActivityIntent(this);
@@ -292,7 +291,8 @@ public class CustomerDetail extends AppCompatActivity implements View.OnClickLis
                     ? "false" : editCity.getText().toString());
             values.put("zip", editZip.getText().toString().trim().equals("")
                     ? "false" : editZip.getText().toString());
-
+            values.put("image_medium", strCustomerImage.equals("false") ? "false" : strCustomerImage);
+            
             partner.update(values, "id = ?", String.valueOf(customer_id));
             Toast.makeText(this, "Customer Updated", Toast.LENGTH_SHORT).show();
             OSyncUtils.get(this, partner).sync(null);
