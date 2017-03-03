@@ -139,6 +139,9 @@
         <activity android:name=".addons.sales.ProductDetail" />
         <activity android:name=".UserProfile" />
         <activity android:name=".addons.customers.CustomerDetail" />
+        <activity
+            android:name="com.odoo.widget.chatter.MessageComposer"
+            android:theme="@style/Theme.AppCompat.Light.Dialog" />
     </application>
 
 </manifest>

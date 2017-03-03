@@ -766,7 +766,13 @@ public class OdooWrapper<T> implements Response.Listener<JSONObject> {
     }
 
     public HashMap<String, Object> updateContext(HashMap<String, Object> newContext) {
-        newContext.putAll(odooSession.userContext());
+        if (odooSession != null && odooSession.userContext() != null)
+            newContext.putAll(odooSession.userContext());
+        if (user != null) {
+            newContext.clear();
+            newContext.put("uid", user.getUserId());
+            newContext.put("tz", user.getTimezone());
+        }
         return newContext;
     }
 

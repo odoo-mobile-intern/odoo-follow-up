@@ -48,4 +48,16 @@
     <string name="label_new_message">New Message</string>
     <string name="label_log_an_internal_note">Log an internal note</string>
     <string name="label_or">OR</string>
+    <string name="label_send">Send</string>
+    <string name="label_subject">Subject</string>
+    <string name="label_message">Message</string>
+    <string name="label_write_something">Write something...</string>
+    <string name="error_put_some_input_for_message">Put some input for message</string>
+    <string name="label_sending">Sending...</string>
+    <string name="toast_message_sent">Message sent..</string>
+    <string name="toast_not_able_to_send_message">Not able to send message. Try again later.</string>
+    <string name="label_log">Log</string>
+    <string name="label_logging">Logging...</string>
+    <string name="toast_note_logged">Note logged</string>
+    <string name="toast_not_able_to_log_note">Not able to log note</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.odoo.widget.chatter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SyncResult;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -94,10 +95,18 @@ public class ChatterView extends LinearLayout implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
+        Intent composer = new Intent(getContext(), MessageComposer.class);
+        composer.putExtra(MessageComposer.KEY_MODEL, model.getModelName());
+        composer.putExtra(MessageComposer.KEY_RES_ID, server_id);
+        composer.putExtra(MessageComposer.KEY_RECORD_NAME, model.getName(model.selectRowId(server_id)));
         switch (view.getId()) {
             case R.id.newMessage:
+                composer.putExtra(MessageComposer.KEY_MESSAGE_TYPE, MessageComposer.MESSAGE_TYPE_MAIL);
+                getContext().startActivity(composer);
                 break;
             case R.id.logInternalNote:
+                composer.putExtra(MessageComposer.KEY_MESSAGE_TYPE, MessageComposer.MESSAGE_TYPE_NOTE);
+                getContext().startActivity(composer);
                 break;
         }
     }
@@ -151,7 +160,7 @@ public class ChatterView extends LinearLayout implements View.OnClickListener {
             CBind.setText(view.findViewById(R.id.messageAuthor), partnerObj.getString("name"));
             if (!partnerObj.getString("image_medium").equals("false")) {
                 ImageView avatar = (ImageView) view.findViewById(R.id.authorImage);
-                avatar.setImageBitmap(BitmapUtils.getBitmapImage(getContext(), partnerObj.getString("image_medium"))    );
+                avatar.setImageBitmap(BitmapUtils.getBitmapImage(getContext(), partnerObj.getString("image_medium")));
             }
             CBind.setText(view.findViewById(R.id.messageDate), ODateUtils.parseDate(ODateUtils.convertToDefault(message.getString("date"), ODateUtils.DEFAULT_FORMAT),
                     ODateUtils.DEFAULT_FORMAT, "dd MMM, hh:mm a"));

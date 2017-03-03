@@ -1,5 +1,6 @@
 package com.odoo.core.support;
 
+import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
@@ -11,5 +12,9 @@ public abstract class OdooActivity extends AppCompatActivity {
 
     protected void setText(int res_id, String value) {
         CBind.setText(findViewById(res_id), value);
+    }
+
+    public Bundle getArgs() {
+        return getIntent().getExtras();
     }
 }

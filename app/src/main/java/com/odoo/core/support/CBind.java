@@ -3,6 +3,7 @@ package com.odoo.core.support;
 import android.graphics.Bitmap;
 import android.text.Spanned;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -37,6 +38,9 @@ public final class CBind {
         }
         if (view instanceof EditText) {
             ((EditText) view).setText(value);
+        }
+        if (view instanceof Button) {
+            ((Button) view).setText(value);
         }
     }
 }
