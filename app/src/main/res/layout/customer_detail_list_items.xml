@@ -3,13 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="#ebebeb"
-
     android:orientation="vertical">
     <!--TextView Layout-->
     <LinearLayout
         android:id="@+id/viewLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="10dp"
         android:background="@color/android_white"
         android:orientation="vertical">
 
@@ -335,6 +335,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/android_white"
+        android:padding="10dp"
         android:orientation="vertical"
         android:visibility="gone">
 

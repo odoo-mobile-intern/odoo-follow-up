@@ -7,22 +7,26 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
+import android.text.Html;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.odoo.core.rpc.helper.ODomain;
 import com.odoo.core.support.CBind;
 import com.odoo.core.support.OUser;
 import com.odoo.core.utils.ODateUtils;
-import com.odoo.core.utils.StringUtils;
 import com.odoo.followup.R;
 import com.odoo.followup.addons.customers.models.ResPartner;
 import com.odoo.followup.addons.mail.models.MailMessage;
 import com.odoo.followup.orm.OModel;
 import com.odoo.followup.orm.data.ListRow;
 import com.odoo.followup.orm.sync.SyncAdapter;
+import com.odoo.followup.utils.BitmapUtils;
+
+import java.util.List;
 
 public class ChatterView extends LinearLayout implements View.OnClickListener {
 
@@ -119,7 +123,9 @@ public class ChatterView extends LinearLayout implements View.OnClickListener {
             ODomain domain = new ODomain();
             domain.add("model", "=", model.getModelName());
             domain.add("res_id", "=", server_id);
-            domain.add("id", "not in", mailMessage.getServerIds());
+            List<Integer> serverIds = mailMessage.getServerIds();
+            if (!serverIds.isEmpty())
+                domain.add("id", "not in", serverIds);
             adapter.withDomain(domain);
             adapter.onlySync();
             adapter.onPerformSync(user.getAccount(), new Bundle(), mailMessage.authority(), null, new SyncResult());
@@ -141,10 +147,15 @@ public class ChatterView extends LinearLayout implements View.OnClickListener {
         ResPartner partner = new ResPartner(getContext());
         for (ListRow message : mailMessage.select(null, "date DESC", "model = ? and res_id = ?", model.getModelName(), server_id + "")) {
             View view = LayoutInflater.from(getContext()).inflate(R.layout.chatter_message_item, container, false);
-            CBind.setText(view.findViewById(R.id.messageAuthor), partner.getName(message.getInt("author_id")));
+            ListRow partnerObj = partner.browse(message.getInt("author_id"));
+            CBind.setText(view.findViewById(R.id.messageAuthor), partnerObj.getString("name"));
+            if (!partnerObj.getString("image_medium").equals("false")) {
+                ImageView avatar = (ImageView) view.findViewById(R.id.authorImage);
+                avatar.setImageBitmap(BitmapUtils.getBitmapImage(getContext(), partnerObj.getString("image_medium"))    );
+            }
             CBind.setText(view.findViewById(R.id.messageDate), ODateUtils.parseDate(ODateUtils.convertToDefault(message.getString("date"), ODateUtils.DEFAULT_FORMAT),
                     ODateUtils.DEFAULT_FORMAT, "dd MMM, hh:mm a"));
-            CBind.setText(view.findViewById(R.id.messageBody), StringUtils.htmlToString(message.getString("body")));
+            CBind.setSpannableText(view.findViewById(R.id.messageBody), Html.fromHtml(message.getString("body")));
             container.addView(view);
         }
     }

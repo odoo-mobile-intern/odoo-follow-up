@@ -5,8 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:paddingBottom="@dimen/dim_8"
-    android:paddingLeft="@dimen/dim_16"
-    android:paddingRight="@dimen/dim_16"
-    android:paddingTop="@dimen/dim_8">
+    android:paddingLeft="@dimen/dim_8"
+    android:paddingRight="@dimen/dim_8">
 
 </LinearLayout>
