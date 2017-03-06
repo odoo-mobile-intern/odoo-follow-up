@@ -18,6 +18,7 @@ import com.odoo.core.support.OUser;
 import com.odoo.core.support.OdooActivity;
 import com.odoo.followup.addons.customers.Customers;
 import com.odoo.followup.addons.dashboard.Dashboard;
+import com.odoo.followup.addons.meetings.Meetings;
 import com.odoo.followup.addons.sales.NextActivity;
 import com.odoo.followup.addons.sales.Pipeline;
 import com.odoo.followup.addons.sales.Products;
@@ -113,6 +114,9 @@ public class HomeActivity extends OdooActivity
                 break;
             case R.id.menu_products:
                 startFragment(new Products(), "Products");
+                break;
+            case R.id.menu_meeting:
+                startFragment(new Meetings(),"Meetings");
                 break;
             case R.id.menu_profile:
                 startActivity(new Intent(this,UserProfile.class));

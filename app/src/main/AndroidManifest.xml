@@ -106,8 +106,27 @@
                 android:resource="@xml/sync_lead_adapter" />
         </service>
 
+        <!--Meetings-->
+        <provider
+            android:name=".addons.meetings.provider.meetingProvider"
+            android:authorities="@string/authority_meetings"
+            android:exported="false"
+            android:label="@string/label_meetings"
+            android:syncable="true" />
+
+        <service
+            android:name=".addons.meetings.service.meetingService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/sync_meeting_adapter" />
+        </service>
+
         <!-- products -->
-        <!-- Lead -->
         <provider
             android:name=".addons.sales.providers.ProductProvider"
             android:authorities="@string/authority_product_template"

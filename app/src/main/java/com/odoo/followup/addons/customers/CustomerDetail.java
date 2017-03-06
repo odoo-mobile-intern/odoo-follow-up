@@ -84,15 +84,14 @@ public class CustomerDetail extends AppCompatActivity implements View.OnClickLis
 
         if (row.getString("mobile").equals("false") && !row.getString("phone").equals("false")) {
             findViewById(R.id.mobileLayout).setVisibility(View.GONE);
+            findViewById(R.id.phoneLayout).setVisibility(View.VISIBLE);
             findViewById(R.id.imageCall2).setVisibility(View.VISIBLE);
         }
 
-        findViewById(R.id.mobileLayout).setVisibility(
-                row.getString("mobile").equals("false") ? View.GONE : View.VISIBLE
-        );
-        findViewById(R.id.phoneLayout).setVisibility(
-                row.getString("phone").equals("false") ? View.GONE : View.VISIBLE
-        );
+        if (!row.getString("mobile").equals("false") && row.getString("phone").equals("false")) {
+            findViewById(R.id.phoneLayout).setVisibility(View.GONE);
+            findViewById(R.id.mobileLayout).setVisibility(View.VISIBLE);
+        }
 
         //Email
         findViewById(R.id.emailLayout).setVisibility(
@@ -113,6 +112,10 @@ public class CustomerDetail extends AppCompatActivity implements View.OnClickLis
                 row.getString("zip").equals("false") ? View.GONE : View.VISIBLE
         );
 
+        if (row.getString("zip").equals("false") && row.getString("city").equals("false") &&
+                row.getString("street2").equals("false") && row.getString("street").equals("false")) {
+            findViewById(R.id.addressLayout).setVisibility(View.GONE);
+        }
         //Website
         findViewById(R.id.websiteLayout).setVisibility(
                 row.getString("website").equals("false") ? View.GONE : View.VISIBLE

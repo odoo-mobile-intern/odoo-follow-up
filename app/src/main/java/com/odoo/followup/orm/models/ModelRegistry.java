@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.odoo.followup.addons.customers.models.ResPartner;
 import com.odoo.followup.addons.mail.models.MailMessage;
+import com.odoo.followup.addons.meetings.models.CalendarEvent;
 import com.odoo.followup.addons.sales.models.CRMLead;
 import com.odoo.followup.addons.sales.models.ProductTemplate;
 import com.odoo.followup.orm.OModel;
@@ -22,6 +23,7 @@ public class ModelRegistry {
         model.put("crm.lead", new CRMLead(context));
         model.put("product.template", new ProductTemplate(context));
         model.put("mail.message", new MailMessage(context));
+        model.put("calendar.event", new CalendarEvent(context));
         return model;
     }
 

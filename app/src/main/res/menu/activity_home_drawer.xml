@@ -5,6 +5,10 @@
             android:id="@+id/menu_dashboard"
             android:icon="@drawable/ic_action_dashboard"
             android:title="@string/title_dashboard" />
+        <item
+            android:id="@+id/menu_meeting"
+            android:icon="@drawable/ic_meeting"
+            android:title="@string/label_meetings" />
 
         <item android:title="@string/title_sales">
             <menu>

@@ -44,6 +44,7 @@
     <string name="authority_res_partner">com.odoo.followup.contacts.sync</string>
     <string name="authority_app_data">com.odoo.followup.appdata.sync</string>
     <string name="authority_crm_lead">com.odoo.followup.leads.sync</string>
+    <string name="authority_meetings">com.odoo.followup.meeting.sync</string>
     <string name="authority_product_template">com.odoo.followup.products.sync</string>
     <string name="label_new_message">New Message</string>
     <string name="label_log_an_internal_note">Log an internal note</string>
@@ -60,4 +61,8 @@
     <string name="label_logging">Logging...</string>
     <string name="toast_note_logged">Note logged</string>
     <string name="toast_not_able_to_log_note">Not able to log note</string>
+    <string name="label_meetings">Meetings</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
