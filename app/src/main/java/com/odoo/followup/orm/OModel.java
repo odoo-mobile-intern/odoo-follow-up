@@ -188,7 +188,7 @@ public class OModel extends SQLiteOpenHelper implements BaseColumns {
     }
 
     public int update(ContentValues values, String where, String... args) {
-        SQLiteDatabase database = getReadableDatabase();
+        SQLiteDatabase database = getWritableDatabase();
         values.put("write_date", ODateUtils.getUTCDateTime());
         int id = database.update(getTableName(), values, where, args);
         getContext().getContentResolver().notifyChange(getUri(), null);
@@ -199,10 +199,6 @@ public class OModel extends SQLiteOpenHelper implements BaseColumns {
     public int update(ContentValues values, int row_id) {
         return mContext.getContentResolver().update(Uri.withAppendedPath(getUri(), row_id + ""),
                 values, null, null);
-    }
-
-    public void deleteAll() {
-        delete(null);
     }
 
     public int delete(String where, String... args) {

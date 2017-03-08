@@ -19,11 +19,8 @@ import com.odoo.core.support.CBind;
 import com.odoo.followup.R;
 import com.odoo.followup.addons.customers.models.ResPartner;
 import com.odoo.followup.orm.data.ListRow;
-import com.odoo.followup.orm.sync.OSyncUtils;
 import com.odoo.followup.utils.BitmapUtils;
 import com.odoo.widget.chatter.ChatterView;
-
-import java.util.List;
 
 public class CustomerDetail extends AppCompatActivity implements View.OnClickListener {
 
@@ -34,6 +31,8 @@ public class CustomerDetail extends AppCompatActivity implements View.OnClickLis
     private CollapsingToolbarLayout collapseToolbar;
     private EditText editName;
     private String strCustomerImage;
+    private EditText editMobile, editPhone, editEmail, editStreet, editStreet2, editZip,
+            editWebsite, editFax, editCity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +47,16 @@ public class CustomerDetail extends AppCompatActivity implements View.OnClickLis
         collapseToolbar = (CollapsingToolbarLayout) findViewById(R.id.profile_collapsing);
 
         editName = (EditText) findViewById(R.id.editCustomerName);
+        editMobile = (EditText) findViewById(R.id.editMobileNumber);
+        editPhone = (EditText) findViewById(R.id.editPhoneNumber);
+        editEmail = (EditText) findViewById(R.id.editEmail);
+        editStreet = (EditText) findViewById(R.id.editStreet);
+        editStreet2 = (EditText) findViewById(R.id.editStreet2);
+        editWebsite = (EditText) findViewById(R.id.editWebsite);
+        editFax = (EditText) findViewById(R.id.editFax);
+        editCity = (EditText) findViewById(R.id.editCity);
+        editZip = (EditText) findViewById(R.id.editPincode);
+
         partner = new ResPartner(this);
         customer_id = getIntent().getIntExtra("_id", -1);
         fab = (FloatingActionButton) findViewById(R.id.fabEdit);
@@ -65,6 +74,7 @@ public class CustomerDetail extends AppCompatActivity implements View.OnClickLis
     private void setCustomerDetails() {
         customerImage.setClickable(false);
         ListRow row = partner.browse(customer_id);
+
         collapseToolbar.setTitle(row.getString("name"));
         strCustomerImage = row.getString("image_medium");
 
@@ -160,47 +170,44 @@ public class CustomerDetail extends AppCompatActivity implements View.OnClickLis
 
     private void setEditCustomerDetail() {
         customerImage.setClickable(true);
+        ListRow row = partner.browse(customer_id);
+        editName.setText(row.getString("name"));
 
-        List<ListRow> rows = partner.select("id = ?", new String[]{String.valueOf(getIntent().getIntExtra("id", -1))});
-        for (ListRow row : rows) {
-            editName.setText(row.getString("name"));
+        //Contact Number
+        CBind.setText(findViewById(R.id.editMobileNumber), row.getString("mobile").equals("false")
+                ? "" : row.getString("mobile"));
+        CBind.setText(findViewById(R.id.editPhoneNumber), row.getString("phone").equals("false")
+                ? "" : row.getString("phone"));
 
-            //Contact Number
-            CBind.setText(findViewById(R.id.editMobileNumber), row.getString("mobile").equals("false")
-                    ? "" : row.getString("mobile"));
-            CBind.setText(findViewById(R.id.editPhoneNumber), row.getString("phone").equals("false")
-                    ? "" : row.getString("phone"));
+        //Email
+        CBind.setText(findViewById(R.id.editEmail), row.getString("email").equals("false")
+                ? "" : row.getString("email"));
 
-            //Email
-            CBind.setText(findViewById(R.id.editEmail), row.getString("email").equals("false")
-                    ? "" : row.getString("email"));
+        //Address
+        CBind.setText(findViewById(R.id.editStreet), row.getString("street").equals("false")
+                ? "" : row.getString("street"));
+        CBind.setText(findViewById(R.id.editStreet2), row.getString("street2").equals("false")
+                ? "" : row.getString("street2"));
+        CBind.setText(findViewById(R.id.editCity), row.getString("city").equals("false")
+                ? "" : row.getString("city"));
+        CBind.setText(findViewById(R.id.editPincode), row.getString("zip").equals("false")
+                ? "" : row.getString("zip"));
 
-            //Address
-            CBind.setText(findViewById(R.id.editStreet), row.getString("street").equals("false")
-                    ? "" : row.getString("street"));
-            CBind.setText(findViewById(R.id.editStreet2), row.getString("street2").equals("false")
-                    ? "" : row.getString("street2"));
-            CBind.setText(findViewById(R.id.editCity), row.getString("city").equals("false")
-                    ? "" : row.getString("city"));
-            CBind.setText(findViewById(R.id.editPincode), row.getString("zip").equals("false")
-                    ? "" : row.getString("zip"));
+        //Website
+        CBind.setText(findViewById(R.id.editWebsite), row.getString("website").equals("false")
+                ? "" : row.getString("website"));
 
-            //Website
-            CBind.setText(findViewById(R.id.editWebsite), row.getString("website").equals("false")
-                    ? "" : row.getString("website"));
+        //Fax
+        CBind.setText(findViewById(R.id.editFax), row.getString("fax").equals("false")
+                ? "" : row.getString("fax"));
 
-            //Fax
-            CBind.setText(findViewById(R.id.editFax), row.getString("fax").equals("false")
-                    ? "" : row.getString("fax"));
+        //Avatar
+        if (!row.getString("image_medium").equals("false"))
+            customerImage.setImageBitmap(BitmapUtils.getBitmapImage(this, row.getString("image_medium")));
+        else
+            customerImage.setImageBitmap(BitmapUtils.getAlphabetImage(this, row.getString("name")));
 
-            //Avatar
-            if (!row.getString("image_medium").equals("false"))
-                customerImage.setImageBitmap(BitmapUtils.getBitmapImage(this, row.getString("image_medium")));
-            else
-                customerImage.setImageBitmap(BitmapUtils.getAlphabetImage(this, row.getString("name")));
-
-            customerImage.setOnClickListener(this);
-        }
+        customerImage.setOnClickListener(this);
     }
 
     private void selectImage() {
@@ -261,46 +268,32 @@ public class CustomerDetail extends AppCompatActivity implements View.OnClickLis
     }
 
     private void saveCustomer() {
-        EditText editMobile, editPhone, editEmail, editStreet, editStreet2, editZip,
-                editWebsite, editFax, editCity;
-
-        editMobile = (EditText) findViewById(R.id.editMobileNumber);
-        editPhone = (EditText) findViewById(R.id.editPhoneNumber);
-        editEmail = (EditText) findViewById(R.id.editEmail);
-        editStreet = (EditText) findViewById(R.id.editStreet);
-        editStreet2 = (EditText) findViewById(R.id.editStreet2);
-        editWebsite = (EditText) findViewById(R.id.editWebsite);
-        editFax = (EditText) findViewById(R.id.editFax);
-        editCity = (EditText) findViewById(R.id.editCity);
-        editZip = (EditText) findViewById(R.id.editPincode);
-
-        ContentValues values = new ContentValues();
         if (isValid()) {
-            values.put("name", editName.getText().toString().trim().equals("")
-                    ? "false" : editName.getText().toString());
-            values.put("mobile", editMobile.getText().toString().trim().equals("")
+            ContentValues values = new ContentValues();
+            values.put("name", editName.getText().toString());
+            values.put("mobile", editMobile.getText().toString().isEmpty()
                     ? "false" : editMobile.getText().toString());
-            values.put("phone", editPhone.getText().toString().trim().equals("")
+            values.put("phone", editPhone.getText().toString().isEmpty()
                     ? "false" : editPhone.getText().toString());
-            values.put("email", editEmail.getText().toString().trim().equals("")
+            values.put("email", editEmail.getText().toString().isEmpty()
                     ? "false" : editEmail.getText().toString());
-            values.put("street", editStreet.getText().toString().trim().equals("")
+            values.put("street", editStreet.getText().toString().isEmpty()
                     ? "false" : editStreet.getText().toString());
-            values.put("street2", editStreet2.getText().toString().trim().equals("")
+            values.put("street2", editStreet2.getText().toString().isEmpty()
                     ? "false" : editStreet2.getText().toString());
-            values.put("website", editWebsite.getText().toString().trim().equals("")
+            values.put("website", editWebsite.getText().toString().isEmpty()
                     ? "false" : editWebsite.getText().toString());
-            values.put("fax", editFax.getText().toString().trim().equals("")
+            values.put("fax", editFax.getText().toString().isEmpty()
                     ? "false" : editFax.getText().toString());
-            values.put("city", editCity.getText().toString().trim().equals("")
+            values.put("city", editCity.getText().toString().isEmpty()
                     ? "false" : editCity.getText().toString());
-            values.put("zip", editZip.getText().toString().trim().equals("")
+            values.put("zip", editZip.getText().toString().isEmpty()
                     ? "false" : editZip.getText().toString());
             values.put("image_medium", strCustomerImage.equals("false") ? "false" : strCustomerImage);
 
-            partner.update(values, "id = ?", String.valueOf(customer_id));
+            partner.update(values, "_id = ?", String.valueOf(customer_id));
             Toast.makeText(this, "Customer Updated", Toast.LENGTH_SHORT).show();
-            OSyncUtils.get(this, partner).sync(null);
+            // OSyncUtils.get(this, partner).sync(null);
             finish();
         }
     }
