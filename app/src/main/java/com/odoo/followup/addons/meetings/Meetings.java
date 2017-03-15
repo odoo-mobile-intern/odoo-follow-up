@@ -13,6 +13,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.odoo.core.support.CBind;
+import com.odoo.core.utils.ODateUtils;
 import com.odoo.followup.R;
 import com.odoo.followup.addons.meetings.models.CalendarEvent;
 import com.odoo.followup.orm.OListAdapter;
@@ -46,7 +47,40 @@ public class Meetings extends BaseFragment implements OListAdapter.OnViewBindLis
 
     @Override
     public void onViewBind(View view, Cursor cursor, ListRow row) {
+
         CBind.setText(view.findViewById(R.id.textMeetingName), row.getString("name"));
+        if (row.getString("allday").equals("false")) {
+            CBind.setText(view.findViewById(R.id.textStartDate), ODateUtils.parseDate(
+                    ODateUtils.convertToDefault(row.getString("start"), ODateUtils.DEFAULT_FORMAT),
+                    ODateUtils.DEFAULT_FORMAT, "dd"));
+            CBind.setText(view.findViewById(R.id.textStartMonthYear), ODateUtils.parseDate(
+                    ODateUtils.convertToDefault(row.getString("start"), ODateUtils.DEFAULT_FORMAT),
+                    ODateUtils.DEFAULT_FORMAT, "MMM yyyy"));
+            CBind.setText(view.findViewById(R.id.textStartTime), ODateUtils.parseDate(
+                    ODateUtils.convertToDefault(row.getString("start"), ODateUtils.DEFAULT_FORMAT),
+                    ODateUtils.DEFAULT_FORMAT, "hh:mm a"));
+
+            CBind.setText(view.findViewById(R.id.textDuration), row.getString("duration") + " Hrs");
+        } else {
+            CBind.setText(view.findViewById(R.id.textStartDate), ODateUtils.parseDate(
+                    ODateUtils.convertToDefault(row.getString("start"), ODateUtils.DEFAULT_FORMAT),
+                    ODateUtils.DEFAULT_FORMAT, "dd"));
+            CBind.setText(view.findViewById(R.id.textStartMonthYear), ODateUtils.parseDate(
+                    ODateUtils.convertToDefault(row.getString("start"), ODateUtils.DEFAULT_FORMAT),
+                    ODateUtils.DEFAULT_FORMAT, "MMM yyyy"));
+
+            CBind.setText(view.findViewById(R.id.textDuration), ODateUtils.parseDate(
+                    ODateUtils.convertToDefault(row.getString("stop"), ODateUtils.DEFAULT_FORMAT),
+                    ODateUtils.DEFAULT_FORMAT, "dd MMM yyyy"));
+        }
+
+        if (row.getString("location").equals("false"))
+            view.findViewById(R.id.textLocation).setVisibility(View.GONE);
+        else CBind.setText(view.findViewById(R.id.textLocation), row.getString("location"));
+
+        if (row.getString("description").equals("false"))
+            view.findViewById(R.id.textDescription).setVisibility(View.GONE);
+        else CBind.setText(view.findViewById(R.id.textDescription), row.getString("description"));
     }
 
     @Override
