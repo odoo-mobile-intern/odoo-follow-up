@@ -11,6 +11,17 @@ import com.odoo.followup.orm.OModel;
 public class CRMLead extends OModel {
 
     OColumn name = new OColumn("Name", ColumnType.VARCHAR);
+    //OColumn partner_id = new OColumn("Customer Id", ColumnType.MANY2ONE, "res.partner");
+    OColumn email_from = new OColumn("Email", ColumnType.VARCHAR);
+    OColumn phone = new OColumn("Phone", ColumnType.VARCHAR);
+    OColumn next_activity_id = new OColumn("Next Activity id", ColumnType.MANY2ONE, "crm.activity");
+    OColumn planned_revenue = new OColumn("Planned revenue", ColumnType.FLOAT);
+    OColumn probability = new OColumn("Probability", ColumnType.FLOAT);
+    OColumn title_action = new OColumn("Title action", ColumnType.VARCHAR);
+    OColumn date_deadline = new OColumn("closing date", ColumnType.DATETIME);
+    OColumn description = new OColumn("Description", ColumnType.TEXT);
+    OColumn date_action = new OColumn("Date action", ColumnType.DATETIME); //next activity date
+    OColumn type = new OColumn("Type", ColumnType.VARCHAR);
 
     public CRMLead(Context context) {
         super(context, "crm.lead");
