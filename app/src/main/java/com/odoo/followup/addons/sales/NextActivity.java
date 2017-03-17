@@ -53,11 +53,18 @@ public class NextActivity extends BaseFragment implements OListAdapter.OnViewBin
     public void onViewBind(View view, Cursor cursor, ListRow row) {
         CBind.setText(view.findViewById(R.id.textNextActionName), row.getString("name"));
         CBind.setText(view.findViewById(R.id.textDateAction), "Next activity on " + row.getString("date_action"));
-        if (row.get("partner_id") != null) {
+        if (row.get("partner_id") != null)
             CBind.setText(view.findViewById(R.id.textCustomer), partner.getName(row.getInt("partner_id")));
-        } else view.findViewById(R.id.textCustomer).setVisibility(View.GONE);
+        else view.findViewById(R.id.textCustomer).setVisibility(View.GONE);
         CBind.setText(view.findViewById(R.id.textRevenue), row.getString("planned_revenue"));
         CBind.setText(view.findViewById(R.id.textProbability), "at " + row.getString("probability") + " %");
+
+        if (row.get("next_activity_id") != null) {
+            String name = crmActivity.getName(row.getInt("next_activity_id"));
+            if (!name.equals("false"))
+                CBind.setText(view.findViewById(R.id.textTag), name);
+            else view.findViewById(R.id.textTag).setVisibility(View.GONE);
+        } else view.findViewById(R.id.textTag).setVisibility(View.GONE);
     }
 
     @Override

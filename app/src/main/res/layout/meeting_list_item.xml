@@ -14,7 +14,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@android:color/darker_gray"
+            android:background="#698198"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -29,14 +29,14 @@
                 android:id="@+id/textStartMonthYear"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/android_white" />
 
             <TextView
                 android:id="@+id/textStartTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/android_white" />
         </LinearLayout>
 
