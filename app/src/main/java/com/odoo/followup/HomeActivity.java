@@ -110,7 +110,7 @@ public class HomeActivity extends OdooActivity
                 startFragment(new Pipeline(), "Pipeline");
                 break;
             case R.id.menu_next_activity:
-                startFragment(new NextActivity(), "Next");
+                startFragment(new NextActivity(), "Next Activity");
                 break;
             case R.id.menu_products:
                 startFragment(new Products(), "Products");
@@ -120,7 +120,6 @@ public class HomeActivity extends OdooActivity
                 break;
             case R.id.menu_profile:
                 startActivity(new Intent(this,UserProfile.class));
-                // todo: start activity
                 break;
             case R.id.menu_settings:
                 // todo: start activity

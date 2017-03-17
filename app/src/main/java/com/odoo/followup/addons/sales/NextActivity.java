@@ -14,6 +14,8 @@ import android.widget.Toast;
 
 import com.odoo.core.support.CBind;
 import com.odoo.followup.R;
+import com.odoo.followup.addons.customers.models.ResPartner;
+import com.odoo.followup.addons.sales.models.CRMActivity;
 import com.odoo.followup.addons.sales.models.CRMLead;
 import com.odoo.followup.orm.OListAdapter;
 import com.odoo.followup.orm.data.ListRow;
@@ -24,6 +26,8 @@ public class NextActivity extends BaseFragment implements OListAdapter.OnViewBin
 
     private OListAdapter adapter;
     private CRMLead opportunities;
+    private ResPartner partner;
+    private CRMActivity crmActivity;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -34,7 +38,9 @@ public class NextActivity extends BaseFragment implements OListAdapter.OnViewBin
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        partner = new ResPartner(getContext());
         opportunities = new CRMLead(getContext());
+        crmActivity = new CRMActivity(getContext());
         ListView opportunitiesList = (ListView) view.findViewById(R.id.opportunitiesList);
         adapter = new OListAdapter(getContext(), null, R.layout.next_activity_list_item);
         adapter.setOnViewBindListener(this);
@@ -45,7 +51,13 @@ public class NextActivity extends BaseFragment implements OListAdapter.OnViewBin
 
     @Override
     public void onViewBind(View view, Cursor cursor, ListRow row) {
-        CBind.setText(view.findViewById(R.id.textName), row.getString("name"));
+        CBind.setText(view.findViewById(R.id.textNextActionName), row.getString("name"));
+        CBind.setText(view.findViewById(R.id.textDateAction), "Next activity on " + row.getString("date_action"));
+        if (row.get("partner_id") != null) {
+            CBind.setText(view.findViewById(R.id.textCustomer), partner.getName(row.getInt("partner_id")));
+        } else view.findViewById(R.id.textCustomer).setVisibility(View.GONE);
+        CBind.setText(view.findViewById(R.id.textRevenue), row.getString("planned_revenue"));
+        CBind.setText(view.findViewById(R.id.textProbability), "at " + row.getString("probability") + " %");
     }
 
     @Override
