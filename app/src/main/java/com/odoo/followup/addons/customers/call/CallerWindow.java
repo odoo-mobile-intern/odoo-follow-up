@@ -48,7 +48,8 @@ public class CallerWindow {
     }
 
     public static void remove() {
-        callerWindow.removeWindow();
+        if (callerWindow != null)
+            callerWindow.removeWindow();
     }
 
     private CallerWindow(Context context, String number, ListRow callDetail) {

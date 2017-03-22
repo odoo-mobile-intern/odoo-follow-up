@@ -9,6 +9,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,6 +18,7 @@ import com.odoo.core.support.CBind;
 import com.odoo.core.support.OUser;
 import com.odoo.core.support.OdooActivity;
 import com.odoo.followup.addons.customers.Customers;
+import com.odoo.followup.addons.customers.call.OverlayPermissionManager;
 import com.odoo.followup.addons.dashboard.Dashboard;
 import com.odoo.followup.addons.meetings.Meetings;
 import com.odoo.followup.addons.sales.NextActivity;
@@ -43,6 +45,20 @@ public class HomeActivity extends OdooActivity
         user = OUser.current(this);
         // loading default fragment
         startFragment(new Dashboard(), "Dashboard");
+        checkOverlayPermission();
+    }
+
+    private void checkOverlayPermission() {
+
+        // TODO, before going to take permission, ask user to allow and than redirect to settings.
+
+        OverlayPermissionManager permissionManager = new OverlayPermissionManager(this);
+        permissionManager.checkDrawOverlayPermission(new OverlayPermissionManager.OnOverlayPermissionListener() {
+            @Override
+            public void canDrawerOverlays(boolean canDraw) {
+                Log.e(">>", "Now you can drawww ?? " + canDraw);
+            }
+        });
     }
 
     @Override
@@ -116,10 +132,10 @@ public class HomeActivity extends OdooActivity
                 startFragment(new Products(), "Products");
                 break;
             case R.id.menu_meeting:
-                startFragment(new Meetings(),"Meetings");
+                startFragment(new Meetings(), "Meetings");
                 break;
             case R.id.menu_profile:
-                startActivity(new Intent(this,UserProfile.class));
+                startActivity(new Intent(this, UserProfile.class));
                 break;
             case R.id.menu_settings:
                 // todo: start activity
