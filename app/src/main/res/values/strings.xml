@@ -65,4 +65,10 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="label_no_attachments">No attachments</string>
+    <string name="label_add">Add</string>
+    <string name="label_total_attachments">%d attachment(s)</string>
+    <string name="toast_no_attachments_to_view">No attachments to view</string>
+    <string name="label_loading_attachments">Loading attachments…</string>
+    <string name="title_attachments">Attachments</string>
 </resources>

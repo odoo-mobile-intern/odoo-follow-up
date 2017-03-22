@@ -144,6 +144,7 @@ public class CustomerDetail extends AppCompatActivity implements View.OnClickLis
 
         ChatterView chatterView = (ChatterView) findViewById(R.id.chatterView);
         chatterView.loadChatter(partner, row.getInt("id"));
+        chatterView.allowAttachments(true);
     }
 
     @Override

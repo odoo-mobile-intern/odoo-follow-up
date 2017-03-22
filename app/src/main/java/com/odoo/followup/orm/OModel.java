@@ -217,10 +217,14 @@ public class OModel extends SQLiteOpenHelper implements BaseColumns {
     }
 
     public int count() {
+        return count(null, null);
+    }
+
+    public int count(String where, String[] args) {
         int count = 0;
         SQLiteDatabase database = getReadableDatabase();
-
-        Cursor cursor = database.rawQuery("SELECT COUNT(*) AS TOTAL FROM " + getTableName(), null);
+        String query = where != null ? " WHERE " + where : "";
+        Cursor cursor = database.rawQuery("SELECT COUNT(*) AS TOTAL FROM " + getTableName() + query, args);
 
         if (cursor.moveToFirst()) {
             count = cursor.getInt(0);

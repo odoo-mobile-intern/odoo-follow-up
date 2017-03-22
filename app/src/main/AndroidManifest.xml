@@ -11,6 +11,8 @@
     <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:name="android.support.multidex.MultiDexApplication"
@@ -161,13 +163,14 @@
         <activity
             android:name="com.odoo.widget.chatter.MessageComposer"
             android:theme="@style/Theme.AppCompat.Light.Dialog" />
+        <activity android:name="com.odoo.widget.chatter.AttachmentViewer" />
 
         <!--file provider-->
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.odoo.followup.fileprovider"
-            android:grantUriPermissions="true"
-            android:exported="false">
+            android:exported="false"
+            android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/filepaths" />

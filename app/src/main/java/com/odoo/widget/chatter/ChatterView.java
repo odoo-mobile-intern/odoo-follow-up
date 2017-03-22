@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.odoo.core.rpc.helper.ODomain;
 import com.odoo.core.support.CBind;
@@ -24,6 +25,7 @@ import com.odoo.followup.addons.customers.models.ResPartner;
 import com.odoo.followup.addons.mail.models.MailMessage;
 import com.odoo.followup.orm.OModel;
 import com.odoo.followup.orm.data.ListRow;
+import com.odoo.followup.orm.models.IrAttachment;
 import com.odoo.followup.orm.sync.SyncAdapter;
 import com.odoo.followup.utils.BitmapUtils;
 
@@ -33,8 +35,11 @@ public class ChatterView extends LinearLayout implements View.OnClickListener {
 
     private OUser user;
     private MailMessage mailMessage;
+    private IrAttachment irAttachment;
     private OModel model;
     private int server_id = -1;
+    private boolean allowAttachments = false;
+    private int total_attachments = 0;
 
     public ChatterView(Context context) {
         super(context);
@@ -59,8 +64,13 @@ public class ChatterView extends LinearLayout implements View.OnClickListener {
 
     private void init() {
         mailMessage = new MailMessage(getContext());
+        irAttachment = new IrAttachment(getContext());
         user = OUser.current(getContext());
         setBackgroundColor(Color.parseColor("#ebebeb"));
+    }
+
+    public void allowAttachments(boolean allow) {
+        allowAttachments = allow;
     }
 
     public void loadChatter(OModel model, int server_id) {
@@ -87,7 +97,47 @@ public class ChatterView extends LinearLayout implements View.OnClickListener {
         findViewById(R.id.logInternalNote).setOnClickListener(this);
 
         new LoadMessages(getContext()).execute();
+
+        // checking chatter view
+        if (allowAttachments) {
+            findViewById(R.id.attachmentViewContainer).setVisibility(View.VISIBLE);
+            findViewById(R.id.addNewAttachment).setOnClickListener(newAttachmentClick);
+            findViewById(R.id.viewAllAttachments).setOnClickListener(viewAllAttachments);
+            CBind.setText(findViewById(R.id.attachmentLabel), getContext()
+                    .getString(R.string.label_loading_attachments));
+            new LoadAttachments(getContext()).execute();
+        }
     }
+
+    private void bindAttachments() {
+        total_attachments = irAttachment.getRecordAttachmentsCount(server_id, model.getModelName());
+        if (total_attachments > 0)
+            CBind.setText(findViewById(R.id.attachmentLabel),
+                    getContext().getString(R.string.label_total_attachments, total_attachments));
+    }
+
+    private View.OnClickListener newAttachmentClick = new OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            // TODO: New Attachment
+            Toast.makeText(getContext(), "new attachment", Toast.LENGTH_SHORT).show();
+        }
+    };
+
+    private View.OnClickListener viewAllAttachments = new OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            if (total_attachments > 0) {
+                Intent attachmentViewer = new Intent(getContext(), AttachmentViewer.class);
+                attachmentViewer.putExtra(AttachmentViewer.KEY_RECORD_NAME, model.getName(model.selectRowId(server_id)));
+                attachmentViewer.putExtra(AttachmentViewer.KEY_MODEL_NAME, model.getModelName());
+                attachmentViewer.putExtra(AttachmentViewer.KEY_RECORD_ID, server_id);
+                getContext().startActivity(attachmentViewer);
+            } else {
+                Toast.makeText(getContext(), R.string.toast_no_attachments_to_view, Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
 
     private View inflate(int view_id) {
         return LayoutInflater.from(getContext()).inflate(view_id, this, false);
@@ -108,6 +158,37 @@ public class ChatterView extends LinearLayout implements View.OnClickListener {
                 composer.putExtra(MessageComposer.KEY_MESSAGE_TYPE, MessageComposer.MESSAGE_TYPE_NOTE);
                 getContext().startActivity(composer);
                 break;
+        }
+    }
+
+    private class LoadAttachments extends AsyncTask<Void, Void, Void> {
+        private Context mContext;
+
+        public LoadAttachments(Context context) {
+            mContext = context;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            SyncAdapter adapter = new SyncAdapter(mContext, true, irAttachment);
+            ODomain domain = new ODomain();
+            domain.add("res_model", "=", model.getModelName());
+            domain.add("res_id", "=", server_id);
+            domain.add("res_field", "=", false);
+            domain.add("datas", "!=", false);
+            List<Integer> serverIds = irAttachment.getServerIds();
+            if (!serverIds.isEmpty())
+                domain.add("id", "not in", serverIds);
+            adapter.withDomain(domain);
+            adapter.onlySync();
+            adapter.onPerformSync(user.getAccount(), new Bundle(), irAttachment.authority(), null, new SyncResult());
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            bindAttachments();
         }
     }
 

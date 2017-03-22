@@ -26,6 +26,7 @@ public class ModelRegistry {
         model.put("mail.message", new MailMessage(context));
         model.put("calendar.event", new CalendarEvent(context));
         model.put("crm.activity", new CRMActivity(context));
+        model.put("ir.attachment", new IrAttachment(context));
         return model;
     }
 

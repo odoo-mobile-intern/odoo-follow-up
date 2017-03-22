@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    app:cardBackgroundColor="#ffffff"
+    app:cardElevation="2dp"
+    app:cardUseCompatPadding="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="@dimen/dim_8">
+
+        <ImageView
+            android:id="@+id/attachmentPreview"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/no_image" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dim_8"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/attachmentFileName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="middle"
+                android:fontFamily="sans-serif-light"
+                android:lines="1"
+                android:singleLine="true"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#414141" />
+
+            <TextView
+                android:id="@+id/attachmentFileSize"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="#88414141" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/downloadAttachment"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/dim_4"
+            android:paddingLeft="@dimen/dim_8"
+            android:paddingRight="@dimen/dim_8"
+            android:src="@drawable/ic_file_download"
+            android:tint="@color/colorPrimaryDark" />
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>
