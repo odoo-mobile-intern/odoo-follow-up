@@ -34,7 +34,6 @@ public class HomeActivity extends OdooActivity
     private OUser user;
     private FloatingActionButton fab;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +48,6 @@ public class HomeActivity extends OdooActivity
     }
 
     private void checkOverlayPermission() {
-
         // TODO, before going to take permission, ask user to allow and than redirect to settings.
 
         OverlayPermissionManager permissionManager = new OverlayPermissionManager(this);

@@ -5,10 +5,9 @@
     android:layout_marginTop="?android:attr/actionBarSize"
     tools:context="com.odoo.followup.addons.dashboard.Dashboard">
 
-    <TextView
+    <ListView
+        android:id="@+id/dashboardGridView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="DashBoard"
-        android:textSize="24sp" />
+        android:layout_height="match_parent"/>
 
 </FrameLayout>

@@ -110,6 +110,26 @@
                 android:resource="@xml/sync_lead_adapter" />
         </service>
 
+        <!--CRM Team-->
+        <provider
+            android:name=".addons.sales.providers.CRMTeamProvider"
+            android:authorities="@string/crm_team_authority"
+            android:exported="false"
+            android:label="@string/label_CRMTeam"
+            android:syncable="true" />
+
+        <service
+            android:name=".addons.sales.services.CRMTeamSyncService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/sync_crm_team_adapter" />
+        </service>
+
         <!--Meetings-->
         <provider
             android:name=".addons.meetings.provider.meetingProvider"
