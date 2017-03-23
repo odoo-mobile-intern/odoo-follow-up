@@ -49,10 +49,19 @@
         </LinearLayout>
 
         <ImageView
-            android:id="@+id/downloadAttachment"
+            android:id="@+id/deleteAttachment"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginLeft="@dimen/dim_4"
+            android:paddingLeft="@dimen/dim_8"
+            android:paddingRight="@dimen/dim_8"
+            android:src="@drawable/ic_delete_forever"
+            android:tint="#cc0000" />
+
+        <ImageView
+            android:id="@+id/downloadAttachment"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:paddingLeft="@dimen/dim_8"
             android:paddingRight="@dimen/dim_8"
             android:src="@drawable/ic_file_download"

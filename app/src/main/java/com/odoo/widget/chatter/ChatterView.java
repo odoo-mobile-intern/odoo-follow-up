@@ -16,9 +16,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.odoo.core.rpc.Odoo;
 import com.odoo.core.rpc.helper.ODomain;
+import com.odoo.core.rpc.helper.ORecordValues;
+import com.odoo.core.rpc.helper.utils.gson.OdooResult;
 import com.odoo.core.support.CBind;
 import com.odoo.core.support.OUser;
+import com.odoo.core.support.OdooActivity;
+import com.odoo.core.support.document.DocumentManager;
 import com.odoo.core.utils.ODateUtils;
 import com.odoo.followup.R;
 import com.odoo.followup.addons.customers.models.ResPartner;
@@ -40,6 +45,8 @@ public class ChatterView extends LinearLayout implements View.OnClickListener {
     private int server_id = -1;
     private boolean allowAttachments = false;
     private int total_attachments = 0;
+    private OdooActivity odooActivity;
+    private boolean isUploading = false;
 
     public ChatterView(Context context) {
         super(context);
@@ -69,7 +76,8 @@ public class ChatterView extends LinearLayout implements View.OnClickListener {
         setBackgroundColor(Color.parseColor("#ebebeb"));
     }
 
-    public void allowAttachments(boolean allow) {
+    public void allowAttachments(OdooActivity activity, boolean allow) {
+        odooActivity = activity;
         allowAttachments = allow;
     }
 
@@ -111,18 +119,83 @@ public class ChatterView extends LinearLayout implements View.OnClickListener {
 
     private void bindAttachments() {
         total_attachments = irAttachment.getRecordAttachmentsCount(server_id, model.getModelName());
+        String msg = getContext().getString(R.string.label_no_attachments);
         if (total_attachments > 0)
-            CBind.setText(findViewById(R.id.attachmentLabel),
-                    getContext().getString(R.string.label_total_attachments, total_attachments));
+            msg = getContext().getString(R.string.label_total_attachments, total_attachments);
+        CBind.setText(findViewById(R.id.attachmentLabel), msg);
     }
 
     private View.OnClickListener newAttachmentClick = new OnClickListener() {
         @Override
         public void onClick(View view) {
-            // TODO: New Attachment
-            Toast.makeText(getContext(), "new attachment", Toast.LENGTH_SHORT).show();
+            if (!isUploading) {
+                DocumentManager documentManager = DocumentManager.getInstance(odooActivity);
+                documentManager.requestFile(new DocumentManager.OnFileSelectListener() {
+                    @Override
+                    public void onFileSelected(ListRow fileData) {
+                        isUploading = true;
+                        CBind.setText(findViewById(R.id.addNewAttachment), getContext()
+                                .getString(R.string.label_uploading));
+                        new CreateNewAttachment().execute(fileData);
+                    }
+
+                    @Override
+                    public void onFileSelectCancel() {
+
+                    }
+                });
+            } else {
+                Toast.makeText(odooActivity, R.string.label_another_upload_in_progress,
+                        Toast.LENGTH_SHORT).show();
+            }
         }
     };
+
+    private class CreateNewAttachment extends AsyncTask<ListRow, Void, Boolean> {
+
+        private Context mContext;
+
+        private CreateNewAttachment() {
+            mContext = getContext();
+        }
+
+        @Override
+        protected Boolean doInBackground(ListRow... files) {
+            try {
+                ListRow file = files[0];
+                Odoo odoo = Odoo.createWithUser(mContext, irAttachment.getUser());
+                ORecordValues values = new ORecordValues();
+                values.put("name", file.getString("name"));
+                values.put("datas_fname", file.getString("datas_fname"));
+                values.put("datas", file.getString("datas"));
+                values.put("company_id", irAttachment.getUser().getCompanyId());
+                values.put("type", "binary");
+                values.put("res_model", model.getModelName());
+                values.put("res_id", server_id);
+                values.put("public", false);
+                OdooResult result = odoo.createRecord(irAttachment.getModelName(), values);
+                Thread.sleep(1000);
+                return result.containsKey("result");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            super.onPostExecute(success);
+            isUploading = false;
+            CBind.setText(findViewById(R.id.addNewAttachment), getContext()
+                    .getString(R.string.label_add));
+            if (success) {
+                Toast.makeText(mContext, R.string.label_file_attached, Toast.LENGTH_SHORT).show();
+                new LoadAttachments(getContext()).execute();
+            } else {
+                Toast.makeText(mContext, R.string.label_file_not_attached, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 
     private View.OnClickListener viewAllAttachments = new OnClickListener() {
         @Override
@@ -180,7 +253,6 @@ public class ChatterView extends LinearLayout implements View.OnClickListener {
             if (!serverIds.isEmpty())
                 domain.add("id", "not in", serverIds);
             adapter.withDomain(domain);
-            adapter.onlySync();
             adapter.onPerformSync(user.getAccount(), new Bundle(), irAttachment.authority(), null, new SyncResult());
             return null;
         }

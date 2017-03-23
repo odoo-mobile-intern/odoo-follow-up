@@ -71,4 +71,12 @@
     <string name="toast_no_attachments_to_view">No attachments to view</string>
     <string name="label_loading_attachments">Loading attachments…</string>
     <string name="title_attachments">Attachments</string>
+    <string name="label_select_file">Select File</string>
+    <string name="label_uploading">Uploading...</string>
+    <string name="label_another_upload_in_progress">Another upload in progress...</string>
+    <string name="label_file_attached">File attached</string>
+    <string name="label_file_not_attached">Something gone wrong. File not uploaded</string>
+    <string name="title_confirm">Confirm</string>
+    <string name="msg_are_you_sure_want_to_remove_attachment">Are you sure want to remove attachment ?</string>
+    <string name="label_yes">Yes</string>
 </resources>

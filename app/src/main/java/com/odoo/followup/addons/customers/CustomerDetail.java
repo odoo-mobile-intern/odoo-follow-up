@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.NavUtils;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,13 +15,14 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.odoo.core.support.CBind;
+import com.odoo.core.support.OdooActivity;
 import com.odoo.followup.R;
 import com.odoo.followup.addons.customers.models.ResPartner;
 import com.odoo.followup.orm.data.ListRow;
 import com.odoo.followup.utils.BitmapUtils;
 import com.odoo.widget.chatter.ChatterView;
 
-public class CustomerDetail extends AppCompatActivity implements View.OnClickListener {
+public class CustomerDetail extends OdooActivity implements View.OnClickListener {
 
     private ResPartner partner;
     private FloatingActionButton fab;
@@ -61,13 +61,7 @@ public class CustomerDetail extends AppCompatActivity implements View.OnClickLis
         customer_id = getIntent().getIntExtra("_id", -1);
         fab = (FloatingActionButton) findViewById(R.id.fabEdit);
         fab.setOnClickListener(this);
-
         customerImage = (ImageView) findViewById(R.id.customer_avatar);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
         setCustomerDetails();
     }
 
@@ -144,7 +138,7 @@ public class CustomerDetail extends AppCompatActivity implements View.OnClickLis
 
         ChatterView chatterView = (ChatterView) findViewById(R.id.chatterView);
         chatterView.loadChatter(partner, row.getInt("id"));
-        chatterView.allowAttachments(true);
+        chatterView.allowAttachments(this, true);
     }
 
     @Override

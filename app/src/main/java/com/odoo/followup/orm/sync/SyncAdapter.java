@@ -245,7 +245,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             serverIds.add(record.getDouble("id").intValue());
         }
         checkIds.removeAll(serverIds);
-        int deleted = model.delete("id in (" + TextUtils.join(", ", checkIds) + ")");
+        int deleted = model.deleteAll(new ArrayList<>(checkIds));
         if (syncResult != null) syncResult.stats.numDeletes += deleted;
     }
 

@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.support.annotation.StringRes;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.odoo.core.rpc.helper.ODomain;
@@ -214,6 +215,20 @@ public class OModel extends SQLiteOpenHelper implements BaseColumns {
 
     public int delete(int row_id) {
         return delete("_id = ?", row_id + "");
+    }
+
+    public int deleteAll(List<Integer> serverIds) {
+        SQLiteDatabase database = getWritableDatabase();
+        int id = database.delete(getTableName(), "id in (" + TextUtils.join(",", serverIds) + ")", null);
+        database.close();
+        return id;
+    }
+
+    public int delete(int row_id, boolean permenent) {
+        SQLiteDatabase database = getWritableDatabase();
+        int id = database.delete(getTableName(), "_id = ?", new String[]{row_id + ""});
+        database.close();
+        return id;
     }
 
     public int count() {

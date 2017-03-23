@@ -110,7 +110,7 @@ public class BitmapUtils {
     }
 
     public static String uriToBase64(Uri uri, ContentResolver resolver, boolean thumbnail) {
-        String encodedBase64 = "";
+        String encodedBase64 = "false";
         try {
             byte[] bytes = readBytes(uri, resolver, thumbnail);
             encodedBase64 = Base64.encodeToString(bytes, 0);

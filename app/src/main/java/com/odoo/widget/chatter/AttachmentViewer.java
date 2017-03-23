@@ -2,6 +2,7 @@ package com.odoo.widget.chatter;
 
 import android.app.Activity;
 import android.app.DownloadManager;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,11 +12,16 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import com.odoo.core.rpc.Odoo;
+import com.odoo.core.rpc.helper.utils.gson.OdooResult;
+import com.odoo.core.rpc.listeners.IOdooResponse;
+import com.odoo.core.rpc.listeners.OdooError;
 import com.odoo.core.support.CBind;
 import com.odoo.core.support.OUser;
 import com.odoo.core.support.OdooActivity;
@@ -74,8 +80,8 @@ public class AttachmentViewer extends OdooActivity implements OListAdapter.OnVie
     @Override
     public void onViewBind(View view, Cursor cursor, final ListRow row) {
         CBind.setText(view.findViewById(R.id.attachmentFileName), row.getString("name"));
-        CBind.setText(view.findViewById(R.id.attachmentFileSize), String.format(Locale.getDefault(),
-                "%.2f MB", row.getInt("file_size") / 1024.0F));
+        CBind.setText(view.findViewById(R.id.attachmentFileSize),
+                humanReadableByteCount(row.getLong("file_size"), true));
         view.findViewById(R.id.downloadAttachment).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -83,9 +89,57 @@ public class AttachmentViewer extends OdooActivity implements OListAdapter.OnVie
                 Toast.makeText(AttachmentViewer.this, "Downloading " + row.getString("name"), Toast.LENGTH_SHORT).show();
             }
         });
+        view.findViewById(R.id.deleteAttachment).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                removeAttachment(row);
+            }
+        });
 
         CBind.setImage(view.findViewById(R.id.attachmentPreview),
                 row.getString("mimetype").contains("image") ? R.drawable.img_image : R.drawable.img_document);
+    }
+
+    private void removeAttachment(final ListRow attachment) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.title_confirm);
+        builder.setMessage(getString(R.string.msg_are_you_sure_want_to_remove_attachment));
+        builder.setPositiveButton(R.string.label_yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                _removeAttachment(attachment);
+            }
+        });
+        builder.setNegativeButton(android.R.string.cancel, null);
+        builder.show();
+    }
+
+    private void _removeAttachment(final ListRow attachment) {
+        try {
+            Odoo odoo = Odoo.createWithUser(this, mUser);
+            odoo.unlinkRecord(irAttachment.getModelName(), attachment.getInt("id"), new IOdooResponse() {
+                @Override
+                public void onResponse(OdooResult response) {
+                    irAttachment.delete(attachment.getInt("_id"), true);
+                    getSupportLoaderManager().restartLoader(0, null, AttachmentViewer.this);
+                }
+
+                @Override
+                public void onError(OdooError error) {
+
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static String humanReadableByteCount(long bytes, boolean si) {
+        int unit = si ? 1000 : 1024;
+        if (bytes < unit) return bytes + " B";
+        int exp = (int) (Math.log(bytes) / Math.log(unit));
+        String pre = (si ? "KMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
+        return String.format(Locale.getDefault(), "%.2f %sB", bytes / Math.pow(unit, exp), pre);
     }
 
     public void downloadFile(int attachment_id, String fileName) {

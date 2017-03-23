@@ -1,6 +1,7 @@
 package com.odoo.followup.orm.data;
 
 import android.database.Cursor;
+import android.util.Log;
 
 import com.odoo.core.rpc.helper.ORecordValues;
 import com.odoo.followup.orm.OColumn;
@@ -9,23 +10,31 @@ import com.odoo.followup.orm.OModel;
 import java.util.HashMap;
 
 public class ListRow extends HashMap<String, Object> {
+    public ListRow() {
+
+    }
+
     public ListRow(Cursor cursor) {
 
         for (String column : cursor.getColumnNames()) {
             int index = cursor.getColumnIndex(column);
-            switch (cursor.getType(index)) {
-                case Cursor.FIELD_TYPE_INTEGER:
-                    put(column, cursor.getInt(index));
-                    break;
-                case Cursor.FIELD_TYPE_STRING:
-                    put(column, cursor.getString(index));
-                    break;
-                case Cursor.FIELD_TYPE_BLOB:
-                    put(column, cursor.getBlob(index));
-                    break;
-                case Cursor.FIELD_TYPE_FLOAT:
-                    put(column, cursor.getFloat(index));
-                    break;
+            if (index != -1) {
+                switch (cursor.getType(index)) {
+                    case Cursor.FIELD_TYPE_INTEGER:
+                        put(column, cursor.getInt(index));
+                        break;
+                    case Cursor.FIELD_TYPE_STRING:
+                        put(column, cursor.getString(index));
+                        break;
+                    case Cursor.FIELD_TYPE_BLOB:
+                        put(column, cursor.getBlob(index));
+                        break;
+                    case Cursor.FIELD_TYPE_FLOAT:
+                        put(column, cursor.getFloat(index));
+                        break;
+                }
+            } else {
+                Log.d("index -1 for column :", column);
             }
         }
     }
@@ -40,6 +49,10 @@ public class ListRow extends HashMap<String, Object> {
 
     public Float getFloat(String key) {
         return containsKey(key) ? Float.parseFloat(get(key) + "") : null;
+    }
+
+    public Long getLong(String key) {
+        return containsKey(key) ? Long.parseLong(get(key) + "") : null;
     }
 
     public ORecordValues toRecordValues(OModel model) {
