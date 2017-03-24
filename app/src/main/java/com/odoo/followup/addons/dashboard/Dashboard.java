@@ -1,7 +1,6 @@
 package com.odoo.followup.addons.dashboard;
 
 import android.database.Cursor;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
@@ -10,7 +9,7 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
+import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -38,7 +37,7 @@ public class Dashboard extends BaseFragment implements OListAdapter.OnViewBindLi
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         crmTeam = new CRMTeam(getContext());
-        ListView listView = (ListView) view.findViewById(R.id.dashboardGridView);
+        GridView listView = (GridView) view.findViewById(R.id.dashboardGridView);
         listAdapter = new OListAdapter(getContext(), null, R.layout.dashboard_list_items);
         listAdapter.setOnViewBindListener(this);
         listView.setAdapter(listAdapter);
@@ -49,20 +48,19 @@ public class Dashboard extends BaseFragment implements OListAdapter.OnViewBindLi
     @Override
     public void onViewBind(View view, Cursor cursor, ListRow row) {
         ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progressInvoice);
-        progressBar.getProgressDrawable().setColorFilter(Color.RED, android.graphics.PorterDuff.Mode.SRC_IN);
         progressBar.setMax(row.getInt("invoiced_target"));
         progressBar.setProgress(row.getInt("invoiced"));
         CBind.setText(view.findViewById(R.id.textCrmTeamName), row.getString("name"));
-        CBind.setText(view.findViewById(R.id.textInvoiceThisMonth), row.getString("invoiced") + " /");
-        CBind.setText(view.findViewById(R.id.textTargetInvoice), getTarget(row.getString("invoiced_target")));
+        CBind.setText(view.findViewById(R.id.textInvoiceThisMonth), getAmount(row.getString("invoiced")) + " /");
+        CBind.setText(view.findViewById(R.id.textTargetInvoice), getAmount(row.getString("invoiced_target")));
     }
 
-    private String getTarget(String invoiced_target) {
-        int amount = (Integer.parseInt(invoiced_target)) / 1000;
-        if (amount > 0)
-            return amount + " k";
+    private String getAmount(String amount) {
+        int amt = (Integer.parseInt(amount)) / 1000;
+        if (amt > 0)
+            return amt + " k";
         else
-            return invoiced_target;
+            return amount;
     }
 
     @Override
