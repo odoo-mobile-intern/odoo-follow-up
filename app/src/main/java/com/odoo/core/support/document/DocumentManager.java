@@ -73,7 +73,7 @@ public class DocumentManager implements OdooActivity.OnOdooActivityResultListene
         if (uri.getScheme().equalsIgnoreCase("content")) {
             // URI Content
             ListRow uriData = getData(uri, null, null);
-            if (uriData != null) {
+            if (uriData != null && uriData.containsKey("mime_type")) {
                 fileData.put("content_uri", uri.toString());
                 fileData.put("datas_fname", uriData.getString(OpenableColumns.DISPLAY_NAME));
                 fileData.put("name", fileData.getString("datas_fname"));

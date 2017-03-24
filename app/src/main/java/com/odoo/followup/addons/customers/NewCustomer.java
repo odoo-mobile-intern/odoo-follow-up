@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,12 +14,13 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.odoo.core.support.OdooActivity;
 import com.odoo.followup.R;
 import com.odoo.followup.addons.customers.models.ResPartner;
 import com.odoo.followup.orm.sync.OSyncUtils;
 import com.odoo.followup.utils.BitmapUtils;
 
-public class NewCustomer extends AppCompatActivity implements View.OnClickListener {
+public class NewCustomer extends OdooActivity implements View.OnClickListener {
 
     private ImageView avatar;
     private EditText editName, editMobileNumber, editPhoneNumber, editEmail, editStreet, editStreet2,
@@ -49,7 +49,7 @@ public class NewCustomer extends AppCompatActivity implements View.OnClickListen
 
     private void init() {
 
-        avatar = (ImageView) findViewById(R.id.avatar);
+        avatar = (ImageView) findViewById(R.id.customerAvatar);
         avatar.setOnClickListener(this);
 
         editName = (EditText) findViewById(R.id.editName);
@@ -185,7 +185,6 @@ public class NewCustomer extends AppCompatActivity implements View.OnClickListen
 
     private void selectImageFromDevice() {
         Intent intent = new Intent();
-
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
 
@@ -208,9 +207,7 @@ public class NewCustomer extends AppCompatActivity implements View.OnClickListen
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (requestCode == 1) {
-
             if (data != null) {
                 Bundle extras = data.getExtras();
                 if (extras != null) {
