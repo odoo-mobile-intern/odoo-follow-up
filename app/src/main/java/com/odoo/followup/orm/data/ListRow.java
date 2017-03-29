@@ -55,6 +55,14 @@ public class ListRow extends HashMap<String, Object> {
         return containsKey(key) ? Long.parseLong(get(key) + "") : null;
     }
 
+    public ListRow getRow(String key) {
+        return (ListRow) get(key);
+    }
+
+    public Double getDouble(String key) {
+        return Double.parseDouble(getString(key));
+    }
+
     public ORecordValues toRecordValues(OModel model) {
         ORecordValues recordValues = new ORecordValues();
         for (String key : keySet()) {

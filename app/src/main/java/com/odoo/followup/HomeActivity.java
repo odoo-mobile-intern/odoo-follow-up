@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -34,7 +35,6 @@ public class HomeActivity extends OdooActivity
     private OUser user;
     private FloatingActionButton fab;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,14 +49,14 @@ public class HomeActivity extends OdooActivity
     }
 
     private void checkOverlayPermission() {
-
         // TODO, before going to take permission, ask user to allow and than redirect to settings.
 
         OverlayPermissionManager permissionManager = new OverlayPermissionManager(this);
         permissionManager.checkDrawOverlayPermission(new OverlayPermissionManager.OnOverlayPermissionListener() {
             @Override
             public void canDrawerOverlays(boolean canDraw) {
-                Log.e(">>", "Now you can drawww ?? " + canDraw);
+                Log.v("OdooFollowUp", "Draw overlays " + canDraw);
+                //TODO: Move to settings (preference)
             }
         });
     }
@@ -145,8 +145,16 @@ public class HomeActivity extends OdooActivity
         return true;
     }
 
-    private void startFragment(Fragment fragment, String title) {
+    public void startFragment(Fragment fragment, String title, boolean backState) {
         setTitle(title);
-        getSupportFragmentManager().beginTransaction().replace(R.id.frame_container, fragment).commit();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction().replace(R.id.frame_container, fragment);
+        if (backState) {
+            transaction.addToBackStack(fragment.getClass().getCanonicalName());
+        }
+        transaction.commit();
+    }
+
+    public void startFragment(Fragment fragment, String title) {
+        startFragment(fragment, title, false);
     }
 }

@@ -16,7 +16,8 @@
             android:layout_weight="1"
             android:background="#698198"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="4dp">
 
             <TextView
                 android:id="@+id/textStartDate"
@@ -43,6 +44,7 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_marginLeft="4dp"
             android:layout_weight="2"
             android:orientation="vertical">
 
@@ -50,8 +52,9 @@
                 android:id="@+id/textMeetingName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="2"
                 android:padding="4dp"
-                android:text="Title"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#cc000000" />
 
@@ -59,10 +62,11 @@
                 android:id="@+id/textLocation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
                 android:paddingBottom="4dp"
                 android:paddingLeft="4dp"
                 android:paddingRight="4dp"
-                android:text="Location"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="#000000" />
 
@@ -87,7 +91,6 @@
                     android:paddingLeft="4dp"
                     android:paddingRight="4dp"
                     android:paddingTop="2dp"
-                    android:text="Duration"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="#000000" />
             </LinearLayout>
@@ -96,14 +99,13 @@
                 android:id="@+id/textDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:maxLines="2"
                 android:ellipsize="end"
+                android:maxLines="3"
                 android:paddingBottom="4dp"
                 android:paddingLeft="4dp"
                 android:paddingRight="4dp"
                 android:paddingTop="2dp"
-                android:text="Description"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="#99000000" />
         </LinearLayout>
     </LinearLayout>
