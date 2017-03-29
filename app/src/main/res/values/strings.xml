@@ -81,4 +81,16 @@
     <string name="msg_are_you_sure_want_to_remove_attachment">Are you sure want to remove attachment ?</string>
     <string name="label_yes">Yes</string>
     <string name="label_CRMTeam">CRM Team</string>
+    <string name="label_todo">Todo</string>
+    <string name="label_performance">Performance</string>
+    <string name="label_today">Today</string>
+    <string name="label_next_activities">Next Activities</string>
+    <string name="label_pipeline">Pipeline</string>
+    <string name="label_next_7_days">Next 7 Days</string>
+    <string name="label_this_month">This month</string>
+    <string name="label_activties_done">Activities Done</string>
+    <string name="label_won_in_opp">Won in Opp.</string>
+    <string name="label_invoiced">Invoiced</string>
+    <string name="label_target">Target</string>
+    <string name="label_last_month">Last month</string>
 </resources>

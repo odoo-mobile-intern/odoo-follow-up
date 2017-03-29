@@ -3,6 +3,7 @@ package com.odoo.followup.orm.models;
 import android.content.Context;
 
 import com.odoo.followup.addons.customers.models.ResPartner;
+import com.odoo.followup.addons.dashboard.models.UserPerformance;
 import com.odoo.followup.addons.mail.models.MailMessage;
 import com.odoo.followup.addons.meetings.models.CalendarEvent;
 import com.odoo.followup.addons.sales.models.CRMActivity;
@@ -29,6 +30,7 @@ public class ModelRegistry {
         model.put("crm.activity", new CRMActivity(context));
         model.put("ir.attachment", new IrAttachment(context));
         model.put("crm.team", new CRMTeam(context));
+        model.put("user.performance", new UserPerformance(context));
         return model;
     }
 
