@@ -18,6 +18,7 @@ import com.odoo.followup.R;
 import com.odoo.followup.addons.meetings.models.CalendarEvent;
 import com.odoo.followup.orm.OListAdapter;
 import com.odoo.followup.orm.data.ListRow;
+import com.odoo.followup.orm.sync.OSyncUtils;
 import com.odoo.followup.utils.support.BaseFragment;
 
 public class Meetings extends BaseFragment implements OListAdapter.OnViewBindListener,
@@ -100,5 +101,11 @@ public class Meetings extends BaseFragment implements OListAdapter.OnViewBindLis
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         adapter.changeCursor(null);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        OSyncUtils.get(getContext(), calendarEvent).sync(new Bundle());
     }
 }

@@ -3,6 +3,7 @@ package com.odoo.followup.addons.dashboard.models;
 import android.content.ContentValues;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.odoo.core.rpc.Odoo;
 import com.odoo.core.rpc.handler.OdooVersionException;
@@ -59,6 +60,7 @@ public class UserPerformance extends OModel {
                     }
                 }
             }
+            Log.v(TAG, "User Performance Data updated");
         } catch (OdooVersionException e) {
             e.printStackTrace();
         }
@@ -76,7 +78,7 @@ public class UserPerformance extends OModel {
         for (String key : items.keySet()) {
             row.put(key, items.get(key));
         }
-        return row;
+        return items.isEmpty() ? null : row;
     }
 
 }

@@ -10,11 +10,18 @@ import com.odoo.followup.orm.OModel;
 import java.util.HashMap;
 
 public class ListRow extends HashMap<String, Object> {
+    private OModel baseModel;
+
     public ListRow() {
 
     }
 
     public ListRow(Cursor cursor) {
+        this(null, cursor);
+    }
+
+    public ListRow(OModel model, Cursor cursor) {
+        this.baseModel = model;
 
         for (String column : cursor.getColumnNames()) {
             int index = cursor.getColumnIndex(column);
@@ -110,4 +117,15 @@ public class ListRow extends HashMap<String, Object> {
         }
         return recordValues;
     }
+
+    public ListRow getM2O(String key) {
+        if (baseModel != null) {
+            OColumn column = baseModel.getColumn(key);
+            if (column != null) {
+                return baseModel.createModel(column.relModel).browse(getInt(key));
+            }
+        }
+        return null;
+    }
+
 }

@@ -126,27 +126,34 @@ public class Dashboard extends BaseFragment implements LoaderManager.LoaderCallb
                 parent().startFragment(new Pipeline(), "Pipeline", true);
             }
         });
-        // To-do
-        CBind.setText(view.findViewById(R.id.todayMeetings), row.getRow("meeting").getString("today"));
-        CBind.setText(view.findViewById(R.id.todayActivity), row.getRow("activity").getString("today"));
-        CBind.setText(view.findViewById(R.id.next7DayMeeting), row.getRow("meeting").getString("next_7_days"));
-        CBind.setText(view.findViewById(R.id.next7DayActivity), row.getRow("activity").getString("next_7_days"));
-        // Performance
-        // done
-        CBind.setText(view.findViewById(R.id.doneActivityThisMonth), row.getRow("done").getString("this_month"));
-        CBind.setText(view.findViewById(R.id.doneActivityTarget), row.getRow("done").getString("target")); // TODO: Click to set
-        CBind.setText(view.findViewById(R.id.doneActivityLastMonth), row.getRow("done").getString("last_month"));
-
-        // won
-        CBind.setText(view.findViewById(R.id.wonOppThisMonth), getCurrency(row.getRow("won").getDouble("this_month")));
-        CBind.setText(view.findViewById(R.id.wonOppTarget), row.getRow("won").getString("target")); // TODO: Click to set
-        CBind.setText(view.findViewById(R.id.wonOppLastMonth), getCurrency(row.getRow("won").getDouble("last_month")));
-
-        // invoice
-        CBind.setText(view.findViewById(R.id.invoiceThisMonth), getCurrency(row.getRow("invoiced").getDouble("this_month")));
-        CBind.setText(view.findViewById(R.id.invoiceTarget), row.getRow("invoiced").getString("target")); // TODO: Click to set
-        CBind.setText(view.findViewById(R.id.invoiceLastMonth), getCurrency(row.getRow("invoiced").getDouble("last_month")));
-
+        if (row != null) {
+            // To-do
+            if (row.getRow("meeting") != null && row.getRow("activity") != null) {
+                CBind.setText(view.findViewById(R.id.todayMeetings), row.getRow("meeting").getString("today"));
+                CBind.setText(view.findViewById(R.id.todayActivity), row.getRow("activity").getString("today"));
+                CBind.setText(view.findViewById(R.id.next7DayMeeting), row.getRow("meeting").getString("next_7_days"));
+                CBind.setText(view.findViewById(R.id.next7DayActivity), row.getRow("activity").getString("next_7_days"));
+            }
+            if (row.getRow("done") != null) {
+                // Performance
+                // done
+                CBind.setText(view.findViewById(R.id.doneActivityThisMonth), row.getRow("done").getString("this_month"));
+                CBind.setText(view.findViewById(R.id.doneActivityTarget), row.getRow("done").getString("target")); // TODO: Click to set
+                CBind.setText(view.findViewById(R.id.doneActivityLastMonth), row.getRow("done").getString("last_month"));
+            }
+            if (row.getRow("won") != null && row.getRow("target") != null) {
+                // won
+                CBind.setText(view.findViewById(R.id.wonOppThisMonth), getCurrency(row.getRow("won").getDouble("this_month")));
+                CBind.setText(view.findViewById(R.id.wonOppTarget), row.getRow("won").getString("target")); // TODO: Click to set
+                CBind.setText(view.findViewById(R.id.wonOppLastMonth), getCurrency(row.getRow("won").getDouble("last_month")));
+            }
+            if (row.getRow("invoiced") != null && row.getRow("target") != null) {
+                // invoice
+                CBind.setText(view.findViewById(R.id.invoiceThisMonth), getCurrency(row.getRow("invoiced").getDouble("this_month")));
+                CBind.setText(view.findViewById(R.id.invoiceTarget), row.getRow("invoiced").getString("target")); // TODO: Click to set
+                CBind.setText(view.findViewById(R.id.invoiceLastMonth), getCurrency(row.getRow("invoiced").getDouble("last_month")));
+            }
+        }
     }
 
 

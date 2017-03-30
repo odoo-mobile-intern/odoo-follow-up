@@ -9,6 +9,7 @@ import com.odoo.followup.addons.meetings.models.CalendarEvent;
 import com.odoo.followup.addons.sales.models.CRMActivity;
 import com.odoo.followup.addons.sales.models.CRMLead;
 import com.odoo.followup.addons.sales.models.CRMTeam;
+import com.odoo.followup.addons.sales.models.CrmStage;
 import com.odoo.followup.addons.sales.models.ProductTemplate;
 import com.odoo.followup.orm.OModel;
 
@@ -31,6 +32,8 @@ public class ModelRegistry {
         model.put("ir.attachment", new IrAttachment(context));
         model.put("crm.team", new CRMTeam(context));
         model.put("user.performance", new UserPerformance(context));
+        model.put("crm.stage", new CrmStage(context));
+        model.put("res.users", new ResUsers(context));
         return model;
     }
 

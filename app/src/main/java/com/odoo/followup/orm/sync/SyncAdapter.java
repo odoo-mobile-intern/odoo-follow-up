@@ -6,9 +6,11 @@ import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SyncResult;
 import android.os.Bundle;
 import android.provider.BaseColumns;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -30,6 +32,8 @@ import java.util.List;
 
 public class SyncAdapter extends AbstractThreadedSyncAdapter {
     public static final String TAG = SyncAdapter.class.getSimpleName();
+    public static final String ACTION_SYNC_FINISH = "action_sync_finished";
+    public static final String KEY_SYNC_MODEL = "sync_model";
     private OUser mUser;
     private Odoo odoo;
     private AccountManager accountManager;
@@ -54,11 +58,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         mUser = getUser(account);
         try {
             odoo = Odoo.createWithUser(mContext, mUser);
-//            if (authority.equals("com.odoo.followup.appdata.sync")) {
-//                 Sync app data with multiple models
-//                 fixme
-//                syncAppData();
-//            } else {
+            if (syncModel == null && bundle != null && bundle.containsKey(KEY_SYNC_MODEL)) {
+                syncModel = OModel.createInstance(bundle.getString(KEY_SYNC_MODEL), mContext);
+            }
             if (syncModel != null) {
                 Log.v(TAG, "Sync started for " + syncModel.getModelName());
                 syncData(syncModel, null, syncResult);
@@ -76,26 +78,20 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                         Log.v(TAG, "Deleted " + syncResult.stats.numSkippedEntries + " record(s) from server.");
 
                     Log.v(TAG, "Sync finished for " + syncModel.getModelName());
+                    sendSyncFinishBroadcast(syncModel);
                 }
             } else {
                 Log.e(TAG, "No model specified for sync service :" + authority);
             }
-//            }
         } catch (OdooVersionException e) {
             e.printStackTrace();
         }
     }
 
-    private void syncAppData() {
-        //todo
-        Log.e(TAG, "App data not synced. Configuration missing");
-        /*
-            Base models:
-               - ir.model.data
-               - res.groups
-               - ir.model.model
-               - ir.model.access
-         */
+    private void sendSyncFinishBroadcast(OModel model) {
+        Intent broadcast = new Intent(ACTION_SYNC_FINISH);
+        broadcast.putExtra(KEY_SYNC_MODEL, model.getModelName());
+        LocalBroadcastManager.getInstance(getContext()).sendBroadcast(broadcast);
     }
 
     private void syncData(OModel model, ODomain syncDomain, SyncResult syncResult) {
