@@ -75,7 +75,8 @@
                 android:layout_marginTop="@dimen/dim_16"
                 android:padding="2dp"
                 android:text="@string/title_customer"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/textCustomerName"
@@ -83,7 +84,8 @@
                 android:layout_height="wrap_content"
                 android:padding="2dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/colorPrimary" />
+                android:textColor="@color/colorPrimary"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/label_email"
@@ -92,7 +94,8 @@
                 android:layout_marginTop="@dimen/dim_16"
                 android:padding="2dp"
                 android:text="@string/title_email"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/textCustomerEmail"
@@ -100,7 +103,8 @@
                 android:layout_height="wrap_content"
                 android:padding="2dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/colorPrimary" />
+                android:textColor="@color/colorPrimary"
+                android:visibility="gone" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -139,7 +143,8 @@
                 android:layout_marginTop="4dp"
                 android:padding="2dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#bb000000" />
+                android:textColor="#bb000000"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/label_deadlinr"
@@ -148,7 +153,8 @@
                 android:layout_marginTop="@dimen/dim_16"
                 android:padding="2dp"
                 android:text="@string/title_expected_closing"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/textDateDeadline"
@@ -156,7 +162,8 @@
                 android:layout_height="wrap_content"
                 android:padding="2dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#cc000000" />
+                android:textColor="#cc000000"
+                android:visibility="gone" />
 
 
             <TextView
@@ -182,7 +189,8 @@
                 android:layout_marginTop="@dimen/dim_16"
                 android:padding="2dp"
                 android:text="@string/title_sales_team"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/textSalesTeam"
@@ -190,7 +198,8 @@
                 android:layout_height="wrap_content"
                 android:padding="2dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#cc000000"/>
+                android:textColor="#cc000000"
+                android:visibility="gone" />
 
             <TextView
                 android:layout_width="wrap_content"

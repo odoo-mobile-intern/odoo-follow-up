@@ -3,6 +3,7 @@ package com.odoo.followup.addons.sales;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.RatingBar;
 
 import com.odoo.core.support.CBind;
@@ -55,17 +56,36 @@ public class PipelineDetail extends AppCompatActivity {
         CBind.setText(findViewById(R.id.textProbability), row.getFloat("probability") + "%");
 
         if (row.get("partner_id") != null) {
+            findViewById(R.id.label_customer).setVisibility(View.VISIBLE);
+            findViewById(R.id.textCustomerName).setVisibility(View.VISIBLE);
             CBind.setText(findViewById(R.id.textCustomerName), customer.getName(row.getInt("partner_id")));
         }
-        CBind.setText(findViewById(R.id.textCustomerEmail), row.getString("email_from"));
-        CBind.setText(findViewById(R.id.textNextActivity), activity.getName(row.getInt("next_activity_id")) + " on ");
+        if (!row.getString("email_from").equals("false")) {
+            findViewById(R.id.label_email).setVisibility(View.VISIBLE);
+            findViewById(R.id.textCustomerEmail).setVisibility(View.VISIBLE);
+            CBind.setText(findViewById(R.id.textCustomerEmail), row.getString("email_from"));
+        }
+        CBind.setText(findViewById(R.id.textStage), stage.getName(row.getInt("stage_id")));
+        if (row.get("next_activity_id") != null && !stage.getName(row.getInt("next_activity_id")).equals("false"))
+            CBind.setText(findViewById(R.id.textNextActivity), activity.getName(row.getInt("next_activity_id")) + " on ");
 
         CBind.setText(findViewById(R.id.textDateAction), row.getString("date_action"));
-        CBind.setText(findViewById(R.id.textTitleAction), row.getString("title_action"));
-        CBind.setText(findViewById(R.id.textDateDeadline), row.getString("date_deadline"));
+        if (!row.getString("title_action").equals("false")) {
+            findViewById(R.id.textTitleAction).setVisibility(View.VISIBLE);
+            CBind.setText(findViewById(R.id.textTitleAction), row.getString("title_action"));
+        }
+        if (!row.getString("date_deadline").equals("false")) {
+            findViewById(R.id.label_deadlinr).setVisibility(View.VISIBLE);
+            findViewById(R.id.textDateDeadline).setVisibility(View.VISIBLE);
+            CBind.setText(findViewById(R.id.textDateDeadline), row.getString("date_deadline"));
+        }
         CBind.setText(findViewById(R.id.textSalesperson), users.getName(row.getInt("user_id")));
 
-        CBind.setText(findViewById(R.id.textSalesTeam), team.getName(row.getInt("team_id")));
+        if (row.get("team_id") != null && !team.getName(row.getInt("team_id")).equals("false")) {
+            findViewById(R.id.label_salesTeam).setVisibility(View.VISIBLE);
+            findViewById(R.id.textSalesTeam).setVisibility(View.VISIBLE);
+            CBind.setText(findViewById(R.id.textSalesTeam), team.getName(row.getInt("team_id")));
+        }
 
         RatingBar oppRating = (RatingBar) findViewById(R.id.oppRating);
         String priority = row.getString("priority");
