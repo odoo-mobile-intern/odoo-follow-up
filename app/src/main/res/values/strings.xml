@@ -93,4 +93,10 @@
     <string name="label_invoiced">Invoiced</string>
     <string name="label_target">Target</string>
     <string name="label_last_month">Last month</string>
+    <string name="title_email">Email</string>
+    <string name="title_customer">Customer</string>
+    <string name="title_sales_team">Sales Team</string>
+    <string name="title_rating">Rating</string>
+    <string name="title_salesperson">Salesperson</string>
+    <string name="title_expected_closing">Expected Closing</string>
 </resources>

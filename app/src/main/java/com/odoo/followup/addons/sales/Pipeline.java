@@ -1,5 +1,6 @@
 package com.odoo.followup.addons.sales;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
@@ -91,7 +93,7 @@ public class Pipeline extends BaseFragment implements
 
     private OListAdapter getAdapter(View view, ListRow stage) {
         GridView gridView = (GridView) view.findViewById(R.id.pagerGridView);
-        OListAdapter adapter = new OListAdapter(getContext(), null, R.layout.sale_pipeline_item_view) {
+        final OListAdapter adapter = new OListAdapter(getContext(), null, R.layout.sale_pipeline_item_view) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 if (convertView == null) {
@@ -125,6 +127,15 @@ public class Pipeline extends BaseFragment implements
             }
         };
         gridView.setAdapter(adapter);
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                ListRow row = new ListRow((Cursor) adapter.getItem(i));
+                Intent intent = new Intent(getContext(), PipelineDetail.class);
+                intent.putExtra("_id", row.getInt("_id"));
+                startActivity(intent);
+            }
+        });
         return adapter;
     }
 

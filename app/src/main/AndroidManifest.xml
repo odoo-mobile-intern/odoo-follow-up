@@ -13,8 +13,8 @@
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission-sdk-23 android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
+    <uses-permission-sdk-23 android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application
         android:name="android.support.multidex.MultiDexApplication"
@@ -110,7 +110,7 @@
                 android:resource="@xml/sync_lead_adapter" />
         </service>
 
-        <!--CRM Team-->
+        <!-- CRM Team -->
         <provider
             android:name=".addons.sales.providers.CRMTeamProvider"
             android:authorities="@string/crm_team_authority"
@@ -130,7 +130,7 @@
                 android:resource="@xml/sync_crm_team_adapter" />
         </service>
 
-        <!--Meetings-->
+        <!-- Meetings -->
         <provider
             android:name=".addons.meetings.provider.meetingProvider"
             android:authorities="@string/authority_meetings"
@@ -187,7 +187,7 @@
             android:theme="@style/Theme.AppCompat.Light.Dialog" />
         <activity android:name="com.odoo.widget.chatter.AttachmentViewer" />
 
-        <!--file provider-->
+        <!-- file provider -->
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.odoo.followup.fileprovider"
@@ -197,6 +197,8 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/filepaths" />
         </provider>
+
+        <activity android:name=".addons.sales.PipelineDetail"/>
     </application>
 
 </manifest>

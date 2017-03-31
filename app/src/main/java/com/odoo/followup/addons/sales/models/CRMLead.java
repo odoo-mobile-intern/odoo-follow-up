@@ -25,6 +25,8 @@ public class CRMLead extends OModel {
     OColumn type = new OColumn("Type", ColumnType.VARCHAR);
     OColumn stage_id = new OColumn("Stage", ColumnType.MANY2ONE, "crm.stage");
     OColumn user_id = new OColumn("User", ColumnType.MANY2ONE, "res.users");
+    OColumn team_id = new OColumn("Sale Team", ColumnType.MANY2ONE, "crm.team");
+    OColumn priority = new OColumn("Priority", ColumnType.VARCHAR);
 
     public CRMLead(Context context) {
         super(context, "crm.lead");
