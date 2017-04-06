@@ -167,7 +167,6 @@ public class Pipeline extends BaseFragment implements
         adapters.get("adapter_" + loader.getId()).changeCursor(null);
     }
 
-
     @Override
     public void onResume() {
         super.onResume();

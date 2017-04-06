@@ -434,4 +434,8 @@ public class OModel extends SQLiteOpenHelper implements BaseColumns {
         ListRow row = browse(row_id);
         return row != null ? row.getString("name") : "false";
     }
+
+    public void onSyncFinished(){
+
+    }
 }

@@ -198,7 +198,8 @@
                 android:resource="@xml/filepaths" />
         </provider>
 
-        <activity android:name=".addons.sales.PipelineDetail"/>
+        <activity android:name=".addons.sales.PipelineDetail" />
+        <receiver android:name=".addons.meetings.reminder.ReminderBroadcast" />
     </application>
 
 </manifest>

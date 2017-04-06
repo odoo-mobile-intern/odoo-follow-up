@@ -78,6 +78,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                         Log.v(TAG, "Deleted " + syncResult.stats.numSkippedEntries + " record(s) from server.");
 
                     Log.v(TAG, "Sync finished for " + syncModel.getModelName());
+                    syncModel.onSyncFinished();
                     sendSyncFinishBroadcast(syncModel);
                 }
             } else {

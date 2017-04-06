@@ -2,6 +2,7 @@ package com.odoo.core.utils;
 
 import android.util.Log;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
@@ -80,4 +81,35 @@ public class ODateUtils {
     public static String convertToDefault(String date, String dateFormat, String toFormat) {
         return createDate(createDateObject(date, dateFormat, false), toFormat, false);
     }
+
+    public static long dateToLong() {
+        return getDate().getTime();
+    }
+
+    public static long dateToLong(Date date) {
+        long milliseconds = date.getTime();
+        return milliseconds;
+    }
+
+    public static Date getDate() {
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat(DEFAULT_FORMAT);
+            Date date = dateFormat.parse(getCurrentDateTime());
+            return date;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Date stringToDate(String strDate) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DEFAULT_FORMAT);
+        try {
+            return dateFormat.parse(strDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }
