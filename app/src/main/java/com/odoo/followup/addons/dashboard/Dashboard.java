@@ -16,6 +16,8 @@ import android.widget.Toast;
 import com.odoo.core.support.CBind;
 import com.odoo.followup.R;
 import com.odoo.followup.addons.dashboard.models.UserPerformance;
+import com.odoo.followup.addons.meetings.Meetings;
+import com.odoo.followup.addons.sales.NextActivity;
 import com.odoo.followup.addons.sales.Pipeline;
 import com.odoo.followup.addons.sales.models.CRMTeam;
 import com.odoo.followup.orm.data.ListRow;
@@ -29,7 +31,7 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 public class Dashboard extends BaseFragment implements LoaderManager.LoaderCallbacks<Cursor>,
-        EasyRecyclerViewAdapter.OnViewBindListener {
+        EasyRecyclerViewAdapter.OnViewBindListener, View.OnClickListener {
 
     private CRMTeam crmTeam;
     private EasyRecyclerView recyclerView;
@@ -120,6 +122,9 @@ public class Dashboard extends BaseFragment implements LoaderManager.LoaderCallb
 
     private void bindUserPerformance(View view) {
         ListRow row = userPerformance.getUserPerformance();
+        view.findViewById(R.id.meetingLayout).setOnClickListener(this);
+        view.findViewById(R.id.nextActivityLayout).setOnClickListener(this);
+
         view.findViewById(R.id.showPipeline).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -159,5 +164,17 @@ public class Dashboard extends BaseFragment implements LoaderManager.LoaderCallb
 
     private String getCurrency(double number) {
         return NumberFormat.getCurrencyInstance(Locale.US).format(number);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.meetingLayout:
+                parent().startFragment(new Meetings(), "Meetings", true);
+                break;
+            case R.id.nextActivityLayout:
+                parent().startFragment(new NextActivity(), "Next Activity", true);
+                break;
+        }
     }
 }

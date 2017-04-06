@@ -97,5 +97,4 @@ public class EasyRecyclerView extends RecyclerView {
             adapter.changeCursor(cursor);
         }
     }
-
 }
