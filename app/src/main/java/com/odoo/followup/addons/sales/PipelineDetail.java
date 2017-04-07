@@ -34,7 +34,7 @@ public class PipelineDetail extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pipeline_detail);
         OAppBarUtils.setAppBar(this, false);
-        setTitle("Details");
+        setTitle(getString(R.string.label_details));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         lead = new CRMLead(this);

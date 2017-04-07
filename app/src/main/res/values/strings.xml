@@ -88,7 +88,7 @@
     <string name="label_pipeline">Pipeline</string>
     <string name="label_next_7_days">Next 7 Days</string>
     <string name="label_this_month">This month</string>
-    <string name="label_activties_done">Activities Done</string>
+    <string name="label_activities_done">Activities Done</string>
     <string name="label_won_in_opp">Won in Opp.</string>
     <string name="label_invoiced">Invoiced</string>
     <string name="label_target">Target</string>
@@ -99,4 +99,7 @@
     <string name="title_rating">Rating</string>
     <string name="title_salesperson">Salesperson</string>
     <string name="title_expected_closing">Expected Closing</string>
+    <string name="label_overlay_permission">Allow Device for Overlay Permission</string>
+    <string name="label_caller_window">Allow Caller Window</string>
+    <string name="label_details">Details</string>
 </resources>

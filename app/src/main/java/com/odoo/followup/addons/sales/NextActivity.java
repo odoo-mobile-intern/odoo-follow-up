@@ -45,7 +45,6 @@ public class NextActivity extends BaseFragment implements OListAdapter.OnViewBin
         adapter = new OListAdapter(getContext(), null, R.layout.next_activity_list_item);
         adapter.setOnViewBindListener(this);
         opportunitiesList.setAdapter(adapter);
-
         getLoaderManager().initLoader(0, null, this);
     }
 
@@ -53,7 +52,7 @@ public class NextActivity extends BaseFragment implements OListAdapter.OnViewBin
     public void onViewBind(View view, Cursor cursor, ListRow row) {
         CBind.setText(view.findViewById(R.id.textNextActionName), row.getString("name"));
         CBind.setText(view.findViewById(R.id.textDateAction), "Next activity on " + row.getString("date_action"));
-        if (row.get("partner_id") != null)
+        if (row.get("partner_id") != null && !partner.getName(row.getInt("partner_id")).equals("false"))
             CBind.setText(view.findViewById(R.id.textCustomer), partner.getName(row.getInt("partner_id")));
         else view.findViewById(R.id.textCustomer).setVisibility(View.GONE);
         CBind.setText(view.findViewById(R.id.textRevenue), row.getString("planned_revenue"));

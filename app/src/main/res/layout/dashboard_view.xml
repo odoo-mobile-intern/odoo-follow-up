@@ -264,7 +264,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="@string/label_activties_done"
+                        android:text="@string/label_activities_done"
                         android:textColor="#cc414141"
                         android:textSize="12sp" />
                 </LinearLayout>
