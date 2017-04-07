@@ -195,14 +195,14 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/filepaths" />
+                android:resource="@xml/filepath" />
         </provider>
 
         <activity android:name=".addons.sales.PipelineDetail" />
 
         <receiver android:name=".addons.meetings.reminder.ReminderBroadcast" />
 
-        <activity android:name=".Settings"></activity>
+        <activity android:name=".Settings"/>
     </application>
 
 </manifest>
